@@ -1,0 +1,56 @@
+page-register {
+
+  .login-content {
+    background: #175717;
+
+    .logo-row {
+      padding-top: 50px;
+      padding-bottom: 20px;
+    }
+
+    .login-box {
+      background: #175717;
+      padding: 20px 20px 0px 20px;
+      margin-top: 30px;
+    }
+
+    ion-row {
+       align-items: center;
+       text-align: center;
+     }
+
+     ion-item {
+         border-radius: 30px !important;
+         padding-left: 30px !important;
+         font-size: 0.9em;
+         margin-bottom: 10px;
+         border: 1px solid #ffffff;
+         border-bottom: 0px !important;
+         box-shadow: none !important;
+     }
+
+     .signup-col {
+       margin: 0px 16px 0px 16px;
+       padding-bottom: 20px;
+     }
+
+     .item-inner {
+       border-bottom-color: #175717 !important;
+       box-shadow: none !important;
+     }
+
+     .submit-btn {
+       background: #FFDA8C;
+       border-radius: 30px !important;
+       border: 1px solid #FFDA8C;
+       opacity: 1;
+       color: #175717;
+     }
+
+     .register-btn {
+       color: #FFDA8C;
+       font-size: 1em;
+     }
+  }
+
+}

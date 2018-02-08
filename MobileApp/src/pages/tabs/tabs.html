@@ -1,0 +1,28 @@
+<!--
+  Generated template for the TabsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<!-- pages/tabs/tabs.html -->
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left start>
+      <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    </ion-buttons>
+    <ion-title>Map</ion-title>
+    <ion-tabs class="tabs-icon-top tabs-positive" tabsPlacement="top" platform="android" background-color="#1c531c">
+      <!-- Indicates with tabsPage should handle each tab here -->
+      <ion-tab class="tab" [root]="Map" tabTitle="Map" platform="android" tabIcon="../../assets/imgs/pointer_black.png"></ion-tab>
+      <ion-tab [root]="Map2" tabTitle="Map2" platform="android" tabIcon="map"></ion-tab>
+    </ion-tabs>
+  </ion-navbar>
+</ion-header>
+<!--
+<ion-tabs class="tabs-icon-top tabs-positive" tabsPlacement="top" platform="android" background-color="#1c531c">
+  <ion-tab class="tab" [root]="Map" tabTitle="Map" platform="android" tabIcon="../../assets/imgs/pointer_black.png"></ion-tab>
+  <ion-tab [root]="Map2" tabTitle="Map2" platform="android" tabIcon="map"></ion-tab>
+</ion-tabs>
+-->
