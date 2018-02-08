@@ -96,5 +96,20 @@ class User {
         }
         return false;
     }
+
+    function findByUsername() {
+
+        $query = "SELECT u.id, u.name, u.firstName, u.username, u.email, u.phone, u.address FROM ".$this->table_name." u WHERE username=:username";
+
+        $stmt = $this->conn->prepare($query);
+
+        $this->username=htmlspecialchars(strip_tags($this->username));
+
+        $stmt->bindParam(':username', $this->username);
+
+        $stmt->execute();
+
+        return $stmt;
+    }
 }
 ?>
