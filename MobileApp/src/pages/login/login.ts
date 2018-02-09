@@ -9,7 +9,8 @@ import { AuthService } from '../../providers/auth-service/auth-service';
 })
 export class LoginPage {
   loading: Loading;
-  registerCredentials = { email: '', password: '' };
+  registerCredentials = { username: '', password: '' };
+  flag: boolean=false;
 
   constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController) { }
 
@@ -18,8 +19,9 @@ export class LoginPage {
   }
 
   public login() {
+    /*
     this.showLoading()
-    this.auth.login(this.registerCredentials).subscribe(allowed => {
+    this.auth.login(this.registerCredentials).then(allowed => {
       if (allowed) {
         this.nav.setRoot('MenuPage');
       } else {
@@ -28,6 +30,21 @@ export class LoginPage {
     },
       error => {
         this.showError(error);
+      });
+      */
+      if(this.flag)
+        return;
+      this.flag= true;
+      this.auth.login(this.registerCredentials).subscribe(data => {
+        console.log(data);
+        if(true){
+          console.log("grospenis");
+          this.nav.setRoot('MenuPage');
+        }/* else {
+          this.showError("Access Denied");
+        }*/
+      }, error => {
+            console.log(error);
       });
   }
 
