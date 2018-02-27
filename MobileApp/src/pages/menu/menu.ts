@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, Nav } from 'ionic-angular';
+import { MapPage } from '../../pages/map/map';
 
 export interface PageInterface {
   title: string;
@@ -16,7 +17,7 @@ export interface PageInterface {
 })
 export class MenuPage {
   // Basic root for our content view
-  rootPage = 'TabsPage';
+  rootPage = MapPage;
 
   // Reference to the app's root nav
   @ViewChild(Nav) nav: Nav;
@@ -37,7 +38,7 @@ export class MenuPage {
     }
 
     // The active child nav is our Tabs Navigation
-    if (this.nav.getActiveChildNav() && page.index != undefined) {
+    if (this.nav.getActiveChildNavs() && page.index != undefined) {
       this.nav.getActiveChildNav().select(page.index);
     } else {
       // Tabs are not active, so reset the root page

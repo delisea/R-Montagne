@@ -22,6 +22,10 @@ export class MapPage {
     this.loadmap();
   }
 
+  ionViewCanLeave() {
+    document.getElementById("map1").outerHTML = "";
+  }
+
   loadmap() {
     this.map = Leaflet.map("map", {attributionControl: false}).fitWorld();
     Leaflet.control.scale({imperial: false}).addTo(this.map);
