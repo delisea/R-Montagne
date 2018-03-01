@@ -13,12 +13,31 @@
           <ion-list inset>
 
             <ion-item>
+              <ion-input type="text" placeholder="Nom" name="name" [(ngModel)]="registerCredentials.name" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="registerCredentials.firstName" required></ion-input>
+            </ion-item>
+            <ion-item>
               <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="registerCredentials.email" required></ion-input>
             </ion-item>
-
+            <ion-item>
+              <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="registerCredentials.phone" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="registerCredentials.address" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="registerCredentials.username" required></ion-input>
+            </ion-item>
             <ion-item>
               <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="registerCredentials.password" required></ion-input>
             </ion-item>
+            <ion-item>
+              <ion-label>Rescuer</ion-label>
+              <ion-checkbox [(ngModel)]="isRescue" name="rescuer"></ion-checkbox>
+            </ion-item>
+
 
           </ion-list>
         </ion-col>

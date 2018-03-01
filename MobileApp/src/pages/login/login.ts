@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController, LoadingController, Loading, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
+import { HttpParams, HttpClient } from '@angular/common/http/';
 
 @IonicPage()
 @Component({
@@ -10,7 +11,6 @@ import { AuthService } from '../../providers/auth-service/auth-service';
 export class LoginPage {
   loading: Loading;
   registerCredentials = { username: '', password: '' };
-  flag: boolean=false;
 
   constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController) { }
 
@@ -32,15 +32,17 @@ export class LoginPage {
         this.showError(error);
       });
       */
-      if(this.flag)
-        return;
-      this.flag= true;
-      this.auth.login(this.registerCredentials).subscribe(data => {
-        console.log(data);
-        if(true){
-          console.log("grospenis");
+
+      let params = new HttpParams();
+      params = params.append('username', this.registerCredentials.username);
+      params = params.append('password', this.registerCredentials.password);
+      this.auth.login(params).subscribe(data => {
+        if(data)
           this.nav.setRoot('MenuPage');
-        }/* else {
+        else{
+          //popup à faire pour dire que pas bon
+        }
+        /* else {
           this.showError("Access Denied");
         }*/
       }, error => {

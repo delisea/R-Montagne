@@ -6,6 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http/';
 
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map'
@@ -18,7 +19,8 @@ import { MapPage } from '../pages/map/map'
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp, {})
+    IonicModule.forRoot(MyApp, {}),
+    HttpClientModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
