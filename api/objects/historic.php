@@ -26,20 +26,18 @@ class Historic {
 
 	function create() {
 
-		$query = "INSERT INTO ".$this->table_name." SET idTracker=:idTracker, date=:date, position=:position, alert=:alert";
+		$query = "INSERT INTO ".$this->table_name." SET idTracker=:idTracker, position=:position, alert=:alert";
 
 		$stmt = $this->conn->prepare($query);
 
 		$this->idTracker=htmlspecialchars(strip_tags($this->idTracker));
-		$this->date=htmlspecialchars(strip_tags($this->date));
 		$this->position=htmlspecialchars(strip_tags($this->position));
 		$this->alert=htmlspecialchars(strip_tags($this->alert));
 
 		$stmt->bindParam(':idTracker', $this->idTracker);
-		$stmt->bindParam(':date', $this->date);
 		$stmt->bindParam(':position', $this->position);
 		$stmt->bindParam(':alert', $this->alert);
-
+		
 		if ($stmt->execute()) {
 			return true;
 		}

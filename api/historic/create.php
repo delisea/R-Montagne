@@ -13,12 +13,10 @@ $db = $database->getConnection();
 
 $historic = new Historic($db);
 
-if (isset($_POST['idTracker']) && isset($_POST['date']) && isset($_POST['position']) && isset($_POST['alert'])) {
+if (isset($_POST['idTracker']) && isset($_POST['position']) && isset($_POST['alert'])) {
 	$historic->idTracker = $_POST['idTracker'];
-	$historic->date = $_POST['date'];
 	$historic->position = $_POST['position'];
 	$historic->alert = $_POST['alert'];
-
 	if ($historic->create()) {
 		echo json_encode(
 			array("message" => "Historic entry was created.")

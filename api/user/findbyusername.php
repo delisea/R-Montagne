@@ -12,10 +12,11 @@ $database = new Database();
 $db = $database->getConnection();
 
 $user = new User($db);
-
 if (isset($_POST['username'])) {
 
     $user->username = $_POST['username'];
+    if (!isset($_POST['password'])) echo json_encode(array('message' => 'Incorrect Password'));
+    if ($_POST['password'] != 'pouted') echo json_encode(array('message' => 'Incorrect Password'));
 
     $stmt = $user->findByUsername();
     $num = $stmt->rowCount();
