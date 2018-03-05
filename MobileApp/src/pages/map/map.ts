@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
-import { Leaflet } from 'leaflet';
+import Leaflet from 'leaflet';
 import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams, HttpClient } from '@angular/common/http/';
 import { LoginPage } from '../login/login';
