@@ -21,20 +21,6 @@ export class LoginPage {
   }
 
   public login() {
-    /*
-    this.showLoading()
-    this.auth.login(this.registerCredentials).then(allowed => {
-      if (allowed) {
-        this.nav.setRoot('MenuPage');
-      } else {
-        this.showError("Access Denied");
-      }
-    },
-      error => {
-        this.showError(error);
-      });
-      */
-
       let params = new HttpParams();
       params = params.append('username', this.registerCredentials.username);
       params = params.append('password', this.registerCredentials.password);
@@ -44,9 +30,6 @@ export class LoginPage {
         else{
           //popup à faire pour dire que pas bon
         }
-        /* else {
-          this.showError("Access Denied");
-        }*/
       }, error => {
             console.log(error);
       });
