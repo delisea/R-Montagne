@@ -7,22 +7,18 @@ import 'rxjs/add/operator/map';
 
 let apiURL = 'http://closed.power-heberg.com/RMontagne/api/'
 let response: object;
-export class User {
-  name: string;
-  username: string;
-  session: string;
 
-  constructor(name: string, username: string, session: string) {
-    this.name = name;
-    this.username = username;
+export class User {
+  session: string;
+  logInfos: UserInfos;
+
+  constructor( session: string, logInfos: UserInfos) {
     this.session = session;
+    this.logInfos = logInfos;
   }
 }
 
-export interface LogResponse{
-  session: string;
-  success: number;
-  user: {
+export interface UserInfos{
     name: string;
     firstName: string;
     username: string;
@@ -30,19 +26,21 @@ export interface LogResponse{
     phone: string;
     address: string;
     rescuer: number;
-  }
+}
+
+export interface LogResponse{
+  session: string;
+  success: number;
+  user: UserInfos;
 }
 
 export interface RegResponse{
   success: number;
-  user: {
-    name: string;
-    firstname: string;
-    email: string;
-    phone: string;
-    address: string;
-    username: string;
-  }
+  user: UserInfos;
+}
+
+export interface SucResponse{
+  success: number;
 }
 
 @Injectable()
@@ -50,6 +48,7 @@ export class AuthService {
   currentUser: User;
   logres: LogResponse;
   regres: RegResponse;
+  sucres: SucResponse;
 
 
   constructor(public httpClient: HttpClient) {}
@@ -102,11 +101,9 @@ export class AuthService {
           return Observable.create(observer => {
               this.httpClient.post<LogResponse>(apiURL+'user/login.php', credentials).subscribe(data => {
                 this.logres = data;
-                console.log('grospenis');
-                console.log(this.logres);
-
+                this.currentUser = new User(this.logres.session, this.logres.user);
+                console.log(this.currentUser);
                 observer.next(this.logres.success === 1);
-                console.log(this.logres);
                 observer.complete();
               });
           });
@@ -146,11 +143,15 @@ export class AuthService {
     return this.httpClient.post(apiURL+url, message);
   }
 */
-  public logout() {
+  public logout(session) {
     return Observable.create(observer => {
-      this.currentUser = null;
-      observer.next(true);
+      console.log('grospenis');
+      this.httpClient.post<SucResponse>(apiURL+'user/logout.php', session).subscribe(data => {
+      this.sucres = data;
+      observer.next(this.sucres.success === 1);
+      console.log('grospenistamer');
       observer.complete();
     });
-  }
+  });
+}
 }
