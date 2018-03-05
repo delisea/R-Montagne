@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import { Http, Headers } from '@angular/http';
 import { HttpParams, HttpClient } from '@angular/common/http/';
+//import { LoginPage } from '../../pages/login/login';
+import { App } from 'ionic-angular';
 
 import 'rxjs/add/operator/map';
 
@@ -12,20 +14,20 @@ export class User {
   session: string;
   logInfos: UserInfos;
 
-  constructor( session: string, logInfos: UserInfos) {
+  constructor(session: string, logInfos: UserInfos) {
     this.session = session;
     this.logInfos = logInfos;
   }
 }
 
 export interface UserInfos{
-    name: string;
-    firstName: string;
-    username: string;
-    email: string;
-    phone: string;
-    address: string;
-    rescuer: number;
+  name: string;
+  firstName: string;
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+  rescuer: number;
 }
 
 export interface LogResponse{
@@ -51,18 +53,18 @@ export class AuthService {
   sucres: SucResponse;
 
 
-  constructor(public httpClient: HttpClient) {}
+  constructor(private app:App, public httpClient: HttpClient) {}
 
-    public login(credentials): Observable<Boolean> {
-      return Observable.create(observer => {
-        this.httpClient.post<LogResponse>(apiURL+'user/login.php', credentials).subscribe(data => {
-          this.logres = data;
-          this.currentUser = new User(this.logres.session, this.logres.user);
-          console.log(this.currentUser);
-          observer.next(this.logres.success === 1);
-          observer.complete();
-        });
+  public login(credentials): Observable<Boolean> {
+    return Observable.create(observer => {
+      this.httpClient.post<LogResponse>(apiURL+'user/login.php', credentials).subscribe(data => {
+        this.logres = data;
+        this.currentUser = new User(this.logres.session, this.logres.user);
+        console.log(this.currentUser);
+        observer.next(this.logres.success === 1);
+        observer.complete();
       });
+    });
   }
 
 
@@ -81,6 +83,9 @@ export class AuthService {
   }
 
   public request(url, params) {
+    if(this.getUserInfo() == undefined)
+      return;
+
     let HTTPparams = new HttpParams();
     Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
     HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
@@ -92,10 +97,13 @@ export class AuthService {
     params = params.append('session', this.getUserInfo().session);
     return Observable.create(observer => {
       this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
-      this.sucres = data;
-      observer.next(this.sucres.success === 1);
-      observer.complete();
+        this.sucres = data;
+        observer.next(this.sucres.success === 1);
+        observer.complete();
+      });
+    }).subscribe(data => {
+      if(data)
+        this.app.getRootNav().setRoot(LoginPage);  
     });
-  });
-}
+  }
 }

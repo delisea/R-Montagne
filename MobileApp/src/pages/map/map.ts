@@ -15,6 +15,13 @@ import { App } from 'ionic-angular';
 export class MapPage {
   @ViewChild('map') mapContainer: ElementRef;
   map: any;
+  selectedFilter: string = "All";
+  markerBeacon;
+  markerCurrent;
+  markerHisto;
+  markerMe;
+
+
   constructor(private app:App, public nav: NavController, private auth: AuthService) {
   }
 
@@ -27,10 +34,26 @@ export class MapPage {
   }
 
   logout() {
-    this.auth.logout().subscribe(data => {
-      if(data)
-        this.app.getRootNav().setRoot(LoginPage);
-    });
+    this.auth.logout();
+  }
+
+  onFilterChanged(segmentButton) {
+    switch (segmentButton.value) {
+      case "All":
+        this.map.addLayer(this.markerCurrent);
+        this.map.addLayer(this.markerHisto);
+        break;
+      case "Me":
+        this.map.removeLayer(this.markerCurrent);
+        this.map.addLayer(this.markerHisto);
+        break;
+      case "Current":
+        this.map.addLayer(this.markerCurrent);
+        this.map.removeLayer(this.markerHisto);
+        break;      
+      default:
+        throw new Error("Unexpected segment value");
+    }
   }
 
   loadmap() {
@@ -88,30 +111,40 @@ export class MapPage {
 
     this.auth.request("generic/getInfo.php", {id : 1, map : 1}).subscribe(data => {
       console.log(data);
-      let markerGroup = Leaflet.featureGroup();
+        //let markerGroup = Leaflet.featureGroup();
+        this.markerBeacon = Leaflet.featureGroup();
+        this.markerCurrent = Leaflet.featureGroup();
+        this.markerHisto = Leaflet.featureGroup();
+        this.markerMe = Leaflet.featureGroup();
         // let marker: any = Leaflet.marker([e.latitude, e.longitude], {icon:IconGreen}).bindPopup(customPopup,{closeButton:false})
         let id  = 0
         for (let e of data.self) {
           var customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (id++===0)?IconGreen:IconGrey}).bindPopup(customPopup,{closeButton:false})
-          markerGroup.addLayer(marker);
+          if(id == 1)
+            this.markerMe.addLayer(marker);
+          else
+            this.markerHisto.addLayer(marker);
         }
         for (let e of data.others) {
           var customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (e.alert==="1")?IconRed:IconBlue}).bindPopup(customPopup,{closeButton:false})
-          markerGroup.addLayer(marker);
+          this.markerCurrent.addLayer(marker);
         }
         for (let e of data.beacons) {
           var customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: IconPurple}).bindPopup(customPopup,{closeButton:false})
-          markerGroup.addLayer(marker);
+          this.markerBeacon.addLayer(marker);
         }
         /*for (let e of data.matt) {if(Number(e.floor) != floor) continue;
           var customPopup2 = "<strong>"+e.name+"</strong><br>"+e.locationX+" - "+e.locationY
           let marker: any = Leaflet.marker([Number(e.locationY), Number(e.locationX)]/*{lat: e.latitude, lon: e.longitude}*//*, {icon:this.IconGreen}).bindPopup(customPopup2,{closeButton:false})
           markerGroup.addLayer(marker);
         }*/
-        this.map.addLayer(markerGroup);
+        this.map.addLayer(this.markerBeacon);
+        this.map.addLayer(this.markerCurrent);
+        this.map.addLayer(this.markerHisto);
+        this.map.addLayer(this.markerMe);
         //this.map.setView([Number("45.1840290"), Number("5.747582")], 14)
         //this.map.setView([Number("45.182279"), Number("5.747395")], 13)
         //console.log(data);
