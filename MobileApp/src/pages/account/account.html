@@ -7,50 +7,48 @@
 <ion-content class="login-content" padding>
   <div class="login-box">
 
-    Firstname<button ion-button>Modify</button>
-
-    <form (ngSubmit)="register()" #registerForm="ngForm">
       <ion-row>
         <ion-col>
           <ion-list inset>
             <ion-item>
+              <ion-label fixed>Lastname</ion-label>
+              <ion-input type="text" placeholder="credentials.name" name="name" [(ngModel)]="credentials.name" required [readonly]="isReadonly()"></ion-input>
+            </ion-item>
+            <ion-item>
               <ion-label fixed>Firstname</ion-label>
-              <ion-input type="text" placeholder="Nom" name="name" [(ngModel)]="registerCredentials.name" required readonly=isRO></ion-input>
+              <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="registerCredentials.firstName" required></ion-input>
+              <ion-label fixed>Email</ion-label>
+              <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="credentials.email" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="registerCredentials.email" required></ion-input>
+              <ion-label fixed>Phone</ion-label>
+              <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="credentials.phone" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="registerCredentials.phone" required></ion-input>
+              <ion-label fixed>Address</ion-label>
+              <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="registerCredentials.address" required></ion-input>
+              <ion-label fixed>Username</ion-label>
+              <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="credentials.username" required></ion-input>
             </ion-item>
             <ion-item>
-              <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="registerCredentials.username" required></ion-input>
+              <ion-label fixed>Password</ion-label>
+              <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password" required></ion-input>
             </ion-item>
-            <ion-item>
-              <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="registerCredentials.password" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label>Rescuer</ion-label>
-              <ion-checkbox [(ngModel)]="isRescue" name="rescuer"></ion-checkbox>
-            </ion-item>
-
-
           </ion-list>
         </ion-col>
       </ion-row>
 
       <ion-row>
         <ion-col class="signup-col">
-          <button ion-button class="register-btn" block clear (click)="modify()">Modify Information</button>
+              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="modify()">Modify Information</button>
+              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="changePassword()">Change Password</button>
+              <button ion-button *ngIf="!isRO" class="register-btn" block clear (click)="save()">Save Modifications</button>
         </ion-col>
       </ion-row>
 
-    </form>
   </div>
 </ion-content>

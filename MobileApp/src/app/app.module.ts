@@ -9,14 +9,13 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http/';
 
 import { MyApp } from './app.component';
-import { MapPage } from '../pages/map/map'
-import { MenuPage } from '../pages/menu/menu'
+import { MapPage } from '../pages/map/map';
+import { MenuPage } from '../pages/menu/menu';
 
 @NgModule({
   declarations: [
     MyApp,
     MapPage,
-    MenuPage,
   ],
   imports: [
     BrowserModule,
@@ -28,7 +27,6 @@ import { MenuPage } from '../pages/menu/menu'
   entryComponents: [
     MyApp,
     MapPage,
-    MenuPage,
   ],
   providers: [
     StatusBar,
