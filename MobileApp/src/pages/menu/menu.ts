@@ -23,8 +23,8 @@ export class MenuPage {
   @ViewChild(Nav) nav: Nav;
 
   pages: PageInterface[] = [
-    { title: 'Tabs', pageName: 'TabsPage', tabComponent: 'Tab1Page', index: 0, icon: 'home' },
-    { title: 'Register', pageName: 'RegisterPage', tabComponent: 'RegisterPage', index: 1, icon: 'home' }
+    { title: 'Map', pageName: 'MapPage', tabComponent: 'MapPage', index: 0, icon: 'map-custom' },
+    { title: 'Account', pageName: 'AccountPage', tabComponent: 'AccountPage', index: 1, icon: 'contact-custom' }
   ];
 
   constructor(public navCtrl: NavController) { }
@@ -38,7 +38,7 @@ export class MenuPage {
     }
 
     // The active child nav is our Tabs Navigation
-    if (this.nav.getActiveChildNavs() && page.index != undefined) {
+    if (this.nav.getActiveChildNav() && page.index != undefined) {
       this.nav.getActiveChildNav().select(page.index);
     } else {
       // Tabs are not active, so reset the root page
@@ -66,3 +66,14 @@ export class MenuPage {
   }
 
 }
+
+/*
+const tabsNav = this.app.getNavByIdOrName('myTabsNav') as Tabs;
+tabsNav.select(1);
+
+---
+
+<ion-tabs name="myTabsNav">
+...
+</ion-tabs>
+*/
