@@ -16,7 +16,7 @@ import { MenuPage } from '../pages/menu/menu'
   declarations: [
     MyApp,
     MapPage,
-    MenuPage
+    MenuPage,
   ],
   imports: [
     BrowserModule,
@@ -28,7 +28,7 @@ import { MenuPage } from '../pages/menu/menu'
   entryComponents: [
     MyApp,
     MapPage,
-    MenuPage
+    MenuPage,
   ],
   providers: [
     StatusBar,
