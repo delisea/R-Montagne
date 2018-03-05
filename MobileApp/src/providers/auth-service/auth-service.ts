@@ -83,8 +83,10 @@ export class AuthService {
   }
 
   public request(url, params) {
-    if(this.getUserInfo() == undefined)
-      return;
+    if(this.getUserInfo() === undefined) {
+      this.logout();
+      return Observable.create(observer => {})
+    }
 
     let HTTPparams = new HttpParams();
     Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
@@ -93,17 +95,21 @@ export class AuthService {
   }
 
   public logout() {
-    let params = new HttpParams();
-    params = params.append('session', this.getUserInfo().session);
-    return Observable.create(observer => {
-      this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
-        this.sucres = data;
-        observer.next(this.sucres.success === 1);
-        observer.complete();
+    if(this.getUserInfo()) {
+      let params = new HttpParams();
+      params = params.append('session', this.getUserInfo().session);
+      return Observable.create(observer => {
+        this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
+          this.sucres = data;
+          observer.next(this.sucres.success === 1);
+          observer.complete();
+        });
+      }).subscribe(data => {
+        if(data)
+          this.app.getRootNav().setRoot('LoginPage');  
       });
-    }).subscribe(data => {
-      if(data)
-        this.app.getRootNav().setRoot(LoginPage);  
-    });
+    }
+    else
+      this.app.getRootNav().setRoot('LoginPage');
   }
 }
