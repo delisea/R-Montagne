@@ -81,10 +81,11 @@ export class AuthService {
   }
 
   public request(url, params) {
+          console.log(this.currentUser);
     let HTTPparams = new HttpParams();
     Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
     HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
-    return this.httpClient.post<any>(apiURL+url, {}/*JSON.stringify(credentials)*/);
+    return this.httpClient.post<any>(apiURL+url, HTTPparams/*JSON.stringify(credentials)*/);
   }
 
   public logout() {
