@@ -79,12 +79,14 @@ export class AuthService {
   public getUserInfo() : User {
     return this.currentUser;
   }
-/*
-  public doPOST(url, message) {
-    message = message.append('session', session);
-    return this.httpClient.post(apiURL+url, message);
+
+  public request(url, params) {
+    let HTTPparams = new HttpParams();
+    Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
+    HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
+    return this.httpClient.post<any>(apiURL+url, {}/*JSON.stringify(credentials)*/);
   }
-*/
+
   public logout() {
     let params = new HttpParams();
     params = params.append('session', this.getUserInfo().session);
