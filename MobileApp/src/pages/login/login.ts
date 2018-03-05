@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { NavController, AlertController, LoadingController, Loading, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams, HttpClient } from '@angular/common/http/';
+import {MenuPage} from '../menu/menu';
+import {App} from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -12,7 +14,7 @@ export class LoginPage {
   loading: Loading;
   registerCredentials = { username: '', password: '' };
 
-  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController) { }
+  constructor(private app:App, private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController) { }
 
   public createAccount() {
     this.nav.push('RegisterPage');
@@ -38,7 +40,7 @@ export class LoginPage {
       params = params.append('password', this.registerCredentials.password);
       this.auth.login(params).subscribe(data => {
         if(data)
-          this.nav.setRoot('MenuPage');
+          this.app.getRootNav().setRoot(MenuPage);
         else{
           //popup à faire pour dire que pas bon
         }

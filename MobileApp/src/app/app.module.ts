@@ -10,11 +10,13 @@ import { HttpClientModule } from '@angular/common/http/';
 
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map'
+import { MenuPage } from '../pages/menu/menu'
 
 @NgModule({
   declarations: [
     MyApp,
-    MapPage
+    MapPage,
+    MenuPage
   ],
   imports: [
     BrowserModule,
@@ -25,7 +27,8 @@ import { MapPage } from '../pages/map/map'
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    MapPage
+    MapPage,
+    MenuPage
   ],
   providers: [
     StatusBar,

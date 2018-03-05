@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, Nav } from 'ionic-angular';
-import { MapPage } from '../../pages/map/map';
+import { MapPage } from '../map/map';
 
 export interface PageInterface {
   title: string;

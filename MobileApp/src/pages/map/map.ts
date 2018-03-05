@@ -3,6 +3,8 @@ import { NavController, IonicPage } from 'ionic-angular';
 import Leaflet from 'leaflet';
 import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams, HttpClient } from '@angular/common/http/';
+import {LoginPage} from '../login/login';
+import {App} from 'ionic-angular';
 
 
 @IonicPage()
@@ -14,7 +16,7 @@ export class MapPage {
   @ViewChild('map') mapContainer: ElementRef;
   map: any;
   user;
-  constructor(public nav: NavController, private auth: AuthService) {
+  constructor(private app:App, public nav: NavController, private auth: AuthService) {
     let user = this.auth.getUserInfo();
   }
 
@@ -32,14 +34,8 @@ export class MapPage {
     console.log(this.user.session);*/
     params = params.append('session', this.auth.getUserInfo().session);
     this.auth.logout(params).subscribe(data => {
-      console.log(data);
-      if(data){
-        this.nav.setRoot('LoginPage').then(() => {
-          this.nav.popToRoot();
-        }).catch(err => {
-          alert(err);
-        });
-      }
+      if(data)
+        this.app.getRootNav().setRoot(LoginPage);
     });
   }
 
