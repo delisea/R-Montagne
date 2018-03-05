@@ -65,6 +65,9 @@ export class MapPage {
       }).on('locationerror', (err) => {
         alert(err.message);
     })
+
+
+    this.auth.request("generic/getInfo.php", {"id" : 1, "map" : 1}).subscribe(data => console.log(data));
   }
 
 }
