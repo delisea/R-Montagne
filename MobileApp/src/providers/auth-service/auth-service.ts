@@ -81,7 +81,6 @@ export class AuthService {
   }
 
   public request(url, params) {
-          console.log(this.currentUser);
     let HTTPparams = new HttpParams();
     Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
     HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
@@ -92,11 +91,9 @@ export class AuthService {
     let params = new HttpParams();
     params = params.append('session', this.getUserInfo().session);
     return Observable.create(observer => {
-      console.log('grospenis');
       this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
       this.sucres = data;
       observer.next(this.sucres.success === 1);
-      console.log('grospenistamer');
       observer.complete();
     });
   });

@@ -10,12 +10,13 @@ import { HttpClientModule } from '@angular/common/http/';
 
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
-import { MenuPage } from '../pages/menu/menu';
+import { AccountPage } from '../pages/account/account';
 
 @NgModule({
   declarations: [
     MyApp,
     MapPage,
+    AccountPage,
   ],
   imports: [
     BrowserModule,
@@ -27,6 +28,7 @@ import { MenuPage } from '../pages/menu/menu';
   entryComponents: [
     MyApp,
     MapPage,
+    AccountPage,
   ],
   providers: [
     StatusBar,
