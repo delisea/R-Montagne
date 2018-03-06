@@ -71,13 +71,3 @@ export class MenuPage {
 
 }
 
-/*
-const tabsNav = this.app.getNavByIdOrName('myTabsNav') as Tabs;
-tabsNav.select(1);
-
----
-
-<ion-tabs name="myTabsNav">
-...
-</ion-tabs>
-*/

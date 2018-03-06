@@ -50,7 +50,7 @@ export class MapPage {
       case "Current":
         this.map.addLayer(this.markerCurrent);
         this.map.removeLayer(this.markerHisto);
-        break;      
+        break;
       default:
         throw new Error("Unexpected segment value");
     }
@@ -109,7 +109,7 @@ export class MapPage {
     })*/
 
 
-    this.auth.request("generic/getInfo.php", {id : 1, map : 1}).subscribe(data => {
+    this.auth.request("generic/getInfo.php", {map : 1}).subscribe(data => {
       console.log(data);
         //let markerGroup = Leaflet.featureGroup();
         this.markerBeacon = Leaflet.featureGroup();
@@ -154,8 +154,8 @@ export class MapPage {
             this.map.setView([Number(data.map.centerLatitude), Number(data.map.centerLongitude)], data.map.zoom)
           });
         }
-      }, 
-      error => { 
+      },
+      error => {
         console.log(error);
       });
 

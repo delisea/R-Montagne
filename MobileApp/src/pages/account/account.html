@@ -1,6 +1,17 @@
 <ion-header>
-  <ion-navbar color="dark">
-    <ion-title>Account</ion-title>
+  <ion-navbar>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title>
+        Account
+      </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="logout()">
+        <ion-icon name="contact"></ion-icon>
+        Log Out
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -11,32 +22,28 @@
         <ion-col>
           <ion-list inset>
             <ion-item>
+              <ion-label fixed>Username</ion-label>
+              <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="credentials.username" required readonly></ion-input>
+            </ion-item>
+            <ion-item>
               <ion-label fixed>Lastname</ion-label>
-              <ion-input type="text" placeholder="credentials.name" name="name" [(ngModel)]="credentials.name" required [readonly]="isReadonly()"></ion-input>
+              <ion-input type="text" placeholder="name" name="name" [(ngModel)]="credentials.name" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label fixed>Firstname</ion-label>
-              <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required></ion-input>
+              <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label fixed>Email</ion-label>
-              <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="credentials.email" required></ion-input>
+              <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="credentials.email" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label fixed>Phone</ion-label>
-              <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="credentials.phone" required></ion-input>
+              <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="credentials.phone" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
             <ion-item>
               <ion-label fixed>Address</ion-label>
-              <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label fixed>Username</ion-label>
-              <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="credentials.username" required></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-label fixed>Password</ion-label>
-              <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="credentials.password" required></ion-input>
+              <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
           </ion-list>
         </ion-col>
@@ -47,6 +54,7 @@
               <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="modify()">Modify Information</button>
               <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="changePassword()">Change Password</button>
               <button ion-button *ngIf="!isRO" class="register-btn" block clear (click)="save()">Save Modifications</button>
+              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="deleteAccount()">Suppression de compte</button>
         </ion-col>
       </ion-row>
 
