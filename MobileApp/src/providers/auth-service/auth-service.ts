@@ -113,21 +113,4 @@ export class AuthService {
       this.app.getRootNav().setRoot('LoginPage');
   }
 
-  public updateInfos(credentials){
-    let params = new HttpParams();
-    params = params.append('session', this.getUserInfo().session);
-    params = params.append('name', credentials.name);
-    params = params.append('firstName', credentials.firstName);
-    params = params.append('email', credentials.email);
-    params = params.append('phone', credentials.phone);
-    params = params.append('address', credentials.address);
-    console.log(params);
-    return Observable.create(observer => {
-      this.httpClient.post<SucResponse>(apiURL+'user/update.php', credentials).subscribe(data => {
-        console.log(data.success);
-        observer.next(data.success === 1);
-        observer.complete();
-      });
-    });
-  }
 }
