@@ -30,7 +30,7 @@ export class MapPage {
   }
 
   ionViewCanLeave() {
-    document.getElementById("map1").outerHTML = "";
+    //document.getElementById("map1").outerHTML = "";
   }
 
   logout() {

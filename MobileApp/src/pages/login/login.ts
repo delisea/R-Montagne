@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, AlertController, LoadingController, Loading, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams, HttpClient } from '@angular/common/http/';
-import {MenuPage} from '../menu/menu';
+import { MapPage } from '../map/map';
 import {App} from 'ionic-angular';
 
 @IonicPage()
@@ -26,7 +26,7 @@ export class LoginPage {
       params = params.append('password', this.registerCredentials.password);
       this.auth.login(params).subscribe(data => {
         if(data)
-          this.app.getRootNav().setRoot('MenuPage');
+          this.app.getRootNav().setRoot(MapPage);
         else{
           //popup à faire pour dire que pas bon
         }
