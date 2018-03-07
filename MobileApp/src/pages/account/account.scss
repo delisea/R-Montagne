@@ -1,5 +1,4 @@
-page-register {
-
+page-account {
   .login-content {
     background: #1c531c;
 
@@ -19,18 +18,36 @@ page-register {
        text-align: center;
      }
 
-     ion-item {
+     ion-item.ro {
         background: #DDDDDD;
-        border-radius: 30px !important;
+        border-radius: 15px !important;
         padding-left: 30px !important;
         font-size: 0.9em;
         margin-bottom: 10px;
         border: 1px solid #DDDDDD;
         border-bottom: 0px !important;
         box-shadow: none !important;
+        font-weight: bold;
      }
 
-      .item-inner {
+     ion-item.notro {
+        background: #EEEEEE;
+        border-radius: 15px !important;
+        padding-left: 30px !important;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        border: 1px solid #EEEEEE;
+        border-bottom: 0px !important;
+        box-shadow: none !important;
+        font-weight: normal;
+     }
+
+      .item-inner.ro {
+        border-bottom-color: #AAAAAA !important;
+        box-shadow: none !important;
+     }
+
+      .item-inner.notro {
         border-bottom-color: #DDDDDD !important;
         box-shadow: none !important;
      }

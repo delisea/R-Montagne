@@ -15,6 +15,9 @@ export class AccountPage {
   backUpCreds: any;
   isRescue = false;
   isRO = true;
+  isCP = false;
+  pass1: string = '';
+  pass2: string = '';
 
   constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController) { }
 
@@ -32,9 +35,14 @@ export class AccountPage {
     this.isRO = false;
   }
 
+  cancel(){
+    this.isRO = true;
+    this.credentials = this.backUpCreds;
+  }
+
 save(){
   this.isRO = true;
-  this.auth.updateInfos(this.credentials).subscribe(data => {
+  this.auth.request('user/update.php', {name: this.credentials.name, firstName: this.credentials.firstName, email: this.credentials.email, phone: this.credentials.phone, address: this.credentials.address}).subscribe(data => {
    console.log(this.credentials);
    console.log(data);
     if(data){
@@ -51,7 +59,32 @@ isReadonly(){
 }
 
 changePassword(){
-  return;
+  this.isCP = true;
+}
+
+cancelPW(){
+  this.isCP = false;
+}
+
+savePW(){
+  this.isCP = false;
+  if(this.pass1 != '' && this.pass1 === this.pass2){
+    this.auth.request('user/updatepwd.php', {password: this.pass1}).subscribe(data => {
+     console.log(this.credentials);
+     console.log(data);
+      if(data){
+        //popup modification faite
+      }
+      else{
+        // à raté
+      }
+    });
+  }
+  else{
+    //popup raté
+  }
+  this.pass1 = '';
+  this.pass2 = '';
 }
 
   showPopup(title, text) {

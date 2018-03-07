@@ -21,27 +21,47 @@
       <ion-row>
         <ion-col>
           <ion-list inset>
-            <ion-item>
+            <ion-item class="ro">
               <ion-label fixed>Username</ion-label>
               <ion-input type="text" placeholder="Username" name="username" [(ngModel)]="credentials.username" required readonly></ion-input>
             </ion-item>
-            <ion-item>
+            <ion-item class="ro" *ngIf="isRO">
               <ion-label fixed>Lastname</ion-label>
               <ion-input type="text" placeholder="name" name="name" [(ngModel)]="credentials.name" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
-            <ion-item>
+            <ion-item class="notro" *ngIf="!isRO">
+              <ion-label fixed>Lastname</ion-label>
+              <ion-input type="text" placeholder="name" name="name" [(ngModel)]="credentials.name" required [readonly]="isReadonly()"></ion-input>
+            </ion-item>
+            <ion-item class="ro" *ngIf="isRO">
               <ion-label fixed>Firstname</ion-label>
               <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
-            <ion-item>
+            <ion-item class="notro" *ngIf="!isRO">
+              <ion-label fixed>Firstname</ion-label>
+              <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required [readonly]="isReadonly()"></ion-input>
+            </ion-item>
+            <ion-item class="ro" *ngIf="isRO">
               <ion-label fixed>Email</ion-label>
               <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="credentials.email" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
-            <ion-item>
+            <ion-item class="notro" *ngIf="!isRO">
+              <ion-label fixed>Email</ion-label>
+              <ion-input type="text" placeholder="Email" name="email" [(ngModel)]="credentials.email" required [readonly]="isReadonly()"></ion-input>
+            </ion-item>
+            <ion-item class="ro" *ngIf="isRO">
               <ion-label fixed>Phone</ion-label>
               <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="credentials.phone" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
-            <ion-item>
+            <ion-item class="notro" *ngIf="!isRO">
+              <ion-label fixed>Phone</ion-label>
+              <ion-input type="text" placeholder="Phone" name="phone" [(ngModel)]="credentials.phone" required [readonly]="isReadonly()"></ion-input>
+            </ion-item>
+            <ion-item class="ro" *ngIf="isRO">
+              <ion-label fixed>Address</ion-label>
+              <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required [readonly]="isReadonly()"></ion-input>
+            </ion-item>
+            <ion-item class="notro" *ngIf="!isRO">
               <ion-label fixed>Address</ion-label>
               <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required [readonly]="isReadonly()"></ion-input>
             </ion-item>
@@ -49,12 +69,32 @@
         </ion-col>
       </ion-row>
 
-      <ion-row>
+      <ion-row *ngIf="!isCP">
         <ion-col class="signup-col">
-              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="modify()">Modify Information</button>
-              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="changePassword()">Change Password</button>
+              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="modify()">Change Information</button>
+              <button ion-button *ngIf="!isRO" class="register-btn" block clear (click)="cancel()">Cancel</button>
               <button ion-button *ngIf="!isRO" class="register-btn" block clear (click)="save()">Save Modifications</button>
-              <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="deleteAccount()">Suppression de compte</button>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="isCP">
+        <ion-col>
+          <ion-list inset>
+            <ion-item>
+              <ion-input type="password" placeholder="New Password" name="pass1" [(ngModel)]="pass1" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="password" placeholder="Repeat Password" name="pass2" [(ngModel)]="pass2" required></ion-input>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="isRO">
+        <ion-col class="signup-col">
+              <button ion-button *ngIf="!isCP" class="register-btn" block clear (click)="changePassword()">Change Password</button>
+              <button ion-button *ngIf="isCP" class="register-btn" block clear (click)="cancelPW()">Cancel</button>
+              <button ion-button *ngIf="isCP" class="register-btn" block clear (click)="savePW()">Save Password</button>
         </ion-col>
       </ion-row>
 
