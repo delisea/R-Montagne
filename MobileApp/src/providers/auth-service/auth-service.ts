@@ -4,6 +4,7 @@ import { Http, Headers } from '@angular/http';
 import { HttpParams, HttpClient } from '@angular/common/http/';
 //import { LoginPage } from '../../pages/login/login';
 import { App } from 'ionic-angular';
+import { Events } from 'ionic-angular';
 
 import 'rxjs/add/operator/map';
 
@@ -53,7 +54,7 @@ export class AuthService {
   sucres: SucResponse;
 
 
-  constructor(private app:App, public httpClient: HttpClient) {}
+  constructor(public events: Events, private app:App, public httpClient: HttpClient) {}
 
   public login(credentials): Observable<Boolean> {
     return Observable.create(observer => {
@@ -62,6 +63,7 @@ export class AuthService {
         this.currentUser = new User(this.logres.session, this.logres.user);
         console.log(this.currentUser);
         observer.next(this.logres.success === 1);
+        this.events.publish('log:change', this.logres.success === 1);
         observer.complete();
       });
     });
@@ -105,8 +107,10 @@ export class AuthService {
           observer.complete();
         });
       }).subscribe(data => {
-        if(data)
+        if(data) {
+          this.events.publish('log:change', false);
           this.app.getRootNav().setRoot('LoginPage');
+        }
       });
     }
     else

@@ -21,10 +21,6 @@ export class AccountPage {
 
   constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController) { }
 
-  logout() {
-    this.auth.logout();
-  }
-
   ngOnInit() {
     this.credentials = this.auth.getUserInfo().logInfos;
     this.backUpCreds = this.credentials;

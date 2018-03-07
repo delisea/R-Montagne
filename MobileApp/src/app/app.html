@@ -13,8 +13,24 @@
       </button>
     </ion-list>
   </ion-content>
-
 </ion-menu>
+
+<ion-header *ngIf="logged">
+  <ion-navbar>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title>
+        Account
+      </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="logout()">
+        <ion-icon name="contact"></ion-icon>
+        Log Out
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>

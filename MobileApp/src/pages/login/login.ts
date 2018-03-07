@@ -4,6 +4,7 @@ import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams, HttpClient } from '@angular/common/http/';
 import { MapPage } from '../map/map';
 import {App} from 'ionic-angular';
+import { Events } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -25,8 +26,9 @@ export class LoginPage {
       params = params.append('username', this.registerCredentials.username);
       params = params.append('password', this.registerCredentials.password);
       this.auth.login(params).subscribe(data => {
-        if(data)
+        if(data) {
           this.app.getRootNav().setRoot(MapPage);
+        }
         else{
           //popup à faire pour dire que pas bon
         }
@@ -41,16 +43,5 @@ export class LoginPage {
       dismissOnPageChange: true
     });
     this.loading.present();
-  }
-
-  showError(text) {
-    this.loading.dismiss();
-
-    let alert = this.alertCtrl.create({
-      title: 'Fail',
-      subTitle: text,
-      buttons: ['OK']
-    });
-    alert.present(prompt);
   }
 }
