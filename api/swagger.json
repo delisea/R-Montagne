@@ -1,0 +1,443 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This API is made for the R'Montagne project\n",
+    "version" : "1.0.0",
+    "title" : "R'Montagne",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "gwenael.moreau@etu.univ-grenoble-alpes.fr"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "closed.power-heberg.com",
+  "basePath" : "/RMontagne/api/",
+  "tags" : [ {
+    "name" : "admin",
+    "description" : "Everybody"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/user/login.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Allow an user to log in",
+        "operationId" : "userLogin",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "formData",
+          "description" : "Username",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password",
+          "in" : "formData",
+          "description" : "Password",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    },
+    "/user/logout.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Allow an user to log out",
+        "operationId" : "userLogout",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "session",
+          "in" : "formData",
+          "description" : "Id of the current session",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    },
+    "/user/register.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Add a new user in the database",
+        "operationId" : "userRegister",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "formData",
+          "description" : "Name of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "firstName",
+          "in" : "formData",
+          "description" : "First Name of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "username",
+          "in" : "formData",
+          "description" : "Login username",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "email",
+          "in" : "formData",
+          "description" : "Email address of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "phone",
+          "in" : "formData",
+          "description" : "Phone number of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "address",
+          "in" : "formData",
+          "description" : "Address of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password",
+          "in" : "formData",
+          "description" : "Password of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "rescuer",
+          "in" : "formData",
+          "description" : "1 if rescuer",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "405" : {
+            "description" : "Invalid input"
+          }
+        }
+      }
+    },
+    "/user/update.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Update basic information of an user",
+        "operationId" : "userUpdate",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "session",
+          "in" : "formData",
+          "description" : "Id of the current session",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "formData",
+          "description" : "New name of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "firstName",
+          "in" : "formData",
+          "description" : "New first-name of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "email",
+          "in" : "formData",
+          "description" : "New email of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "phone",
+          "in" : "formData",
+          "description" : "New phone number of the user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "address",
+          "in" : "formData",
+          "description" : "New address of the user",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    },
+    "/user/updatepwd.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Update password of an user",
+        "operationId" : "userUpdatepwd",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "session",
+          "in" : "formData",
+          "description" : "Id of the current session",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password",
+          "in" : "formData",
+          "description" : "New password of the user",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    },
+    "/map/get.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Return the map properties for the id sent",
+        "operationId" : "mapGet",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "map",
+          "in" : "formData",
+          "description" : "Id of the map asked",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    },
+    "/watch/read.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Return all map connected to the rescuer",
+        "operationId" : "watchRead",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "session",
+          "in" : "formData",
+          "description" : "Id of the current session",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    },
+    "/generic/getInfo.php" : {
+      "post" : {
+        "tags" : [ "admin" ],
+        "summary" : "Return all information on the map for the current user",
+        "operationId" : "genericGetInfo",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "session",
+          "in" : "formData",
+          "description" : "Id of the current session",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "map",
+          "in" : "formData",
+          "description" : "Id of the asked map",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "400" : {
+            "description" : "Successfully failed"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "User" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Moreau"
+        },
+        "firstName" : {
+          "type" : "string",
+          "example" : "Gwenaël"
+        },
+        "username" : {
+          "type" : "string",
+          "example" : "moreaugw"
+        },
+        "email" : {
+          "type" : "string",
+          "example" : "gwenael.moreau@etu.univ-grenoble-alpes"
+        },
+        "phone" : {
+          "type" : "string",
+          "example" : "0612345678"
+        },
+        "address" : {
+          "type" : "string",
+          "example" : "54, Good Ol' Street\n38000 Grenoble\n"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "Toto123"
+        }
+      }
+    },
+    "Tracker" : {
+      "type" : "object",
+      "properties" : {
+        "idTracker" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "idUser" : {
+          "type" : "integer",
+          "example" : 1
+        }
+      }
+    },
+    "Map" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "Bastille"
+        },
+        "topLeftLatitude" : {
+          "type" : "number",
+          "example" : 45.204355
+        },
+        "topLeftLongitude" : {
+          "type" : "number",
+          "example" : 5.713821
+        },
+        "bottomRightLatitude" : {
+          "type" : "number",
+          "example" : 45.195215
+        },
+        "bottomRightLongitude" : {
+          "type" : "number",
+          "example" : 5.733279
+        },
+        "centerLatitude" : {
+          "type" : "number",
+          "example" : 45.1987199
+        },
+        "centerLongitude" : {
+          "type" : "number",
+          "example" : 5.7252414
+        },
+        "zoom" : {
+          "type" : "integer",
+          "example" : 17
+        }
+      }
+    },
+    "Beacon" : {
+      "type" : "object",
+      "properties" : {
+        "idBeacon" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "latitude" : {
+          "type" : "number",
+          "example" : 45.1842378
+        },
+        "longitude" : {
+          "type" : "number",
+          "example" : 5.7404765
+        },
+        "map" : {
+          "type" : "integer",
+          "example" : 1
+        }
+      }
+    },
+    "Historic" : {
+      "type" : "object",
+      "properties" : {
+        "idTracker" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "date" : {
+          "type" : "integer",
+          "example" : 1519893827
+        },
+        "latitude" : {
+          "type" : "number",
+          "example" : 45.1711014
+        },
+        "longitude" : {
+          "type" : "number",
+          "example" : 5.7617583
+        },
+        "alert" : {
+          "type" : "integer",
+          "example" : 0
+        },
+        "map" : {
+          "type" : "integer",
+          "example" : 1
+        }
+      }
+    },
+    "Watch" : {
+      "type" : "object",
+      "properties" : {
+        "idUser" : {
+          "type" : "integer",
+          "example" : 14
+        },
+        "idMap" : {
+          "type" : "integer",
+          "example" : 1
+        }
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
+}

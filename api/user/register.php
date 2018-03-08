@@ -22,10 +22,10 @@ if (isset($_POST['name']) && isset($_POST['firstName']) && isset($_POST['usernam
 
 	$query = 'INSERT INTO User SET name=:name, firstName=:firstName, username=:username, email=:email, phone=:phone, address=:address, password=:password';
 
-	if ($_POST['rescuer'] == 'true')
+	if ($_POST['rescuer'])
 		$query .= ', rescuer=1';
 
-	$stmt = 	$db->prepare($query);
+	$stmt = $db->prepare($query);
 	$stmt->bindParam('name', $name);
 	$stmt->bindParam('firstName', $firstName);
 	$stmt->bindParam('username', $username);

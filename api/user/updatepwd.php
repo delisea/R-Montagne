@@ -6,30 +6,36 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/beacon.php';
+include_once '../objects/user.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$beacon = new Beacon($db);
+if (isset($_POST['session']) && isset($_POST['password'])) {
 
-if (isset($_POST['idBeacon']) && isset($_POST['position'])) {
-	$beacon->idBeacon = $_POST['idBeacon'];
+	session_id($_POST['session']);
+	session_start();
 
-	$beacon->position = $_POST['position'];
+	$id = $_SESSION['id'];
+	$password = htmlspecialchars(strip_tags($_POST['password']));
 
-	if ($beacon->update()) {
+	$query = 'UPDATE User as u SET u.password=:password WHERE u.id=:id';
+
+	$stmt = $db->prepare($query);
+	$stmt->bindParam('id', $id);
+	$stmt->bindParam('password', $password);
+
+	if ($stmt->execute()) {
 		echo json_encode(
-			array("message" => "Beacon was updated.")
+			array('success' => 1)
 		);
 	} else {
 		echo json_encode(
-			array("message" => "Unable to update beacon.")
+			array('success' => 0)
 		);
 	}
 } else {
 	echo json_encode(
-		array("message" => "Unable to update beacon.")
+		array('success' => 0)
 	);
 }
-?>
