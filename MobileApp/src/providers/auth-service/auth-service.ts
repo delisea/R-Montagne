@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import { Http, Headers } from '@angular/http';
 import { HttpParams, HttpClient } from '@angular/common/http/';
+//import { LoginPage } from '../../pages/login/login';
+import { App } from 'ionic-angular';
+import { Events } from 'ionic-angular';
 
 import 'rxjs/add/operator/map';
 
@@ -12,20 +15,20 @@ export class User {
   session: string;
   logInfos: UserInfos;
 
-  constructor( session: string, logInfos: UserInfos) {
+  constructor(session: string, logInfos: UserInfos) {
     this.session = session;
     this.logInfos = logInfos;
   }
 }
 
 export interface UserInfos{
-    name: string;
-    firstName: string;
-    username: string;
-    email: string;
-    phone: string;
-    address: string;
-    rescuer: number;
+  name: string;
+  firstName: string;
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+  rescuer: number;
 }
 
 export interface LogResponse{
@@ -51,18 +54,19 @@ export class AuthService {
   sucres: SucResponse;
 
 
-  constructor(public httpClient: HttpClient) {}
+  constructor(public events: Events, private app:App, public httpClient: HttpClient) {}
 
-    public login(credentials): Observable<Boolean> {
-      return Observable.create(observer => {
-        this.httpClient.post<LogResponse>(apiURL+'user/login.php', credentials).subscribe(data => {
-          this.logres = data;
-          this.currentUser = new User(this.logres.session, this.logres.user);
-          console.log(this.currentUser);
-          observer.next(this.logres.success === 1);
-          observer.complete();
-        });
+  public login(credentials): Observable<Boolean> {
+    return Observable.create(observer => {
+      this.httpClient.post<LogResponse>(apiURL+'user/login.php', credentials).subscribe(data => {
+        this.logres = data;
+        this.currentUser = new User(this.logres.session, this.logres.user);
+        console.log(this.currentUser);
+        observer.next(this.logres.success === 1);
+        this.events.publish('log:change', this.logres.success === 1);
+        observer.complete();
       });
+    });
   }
 
 
@@ -79,23 +83,38 @@ export class AuthService {
   public getUserInfo() : User {
     return this.currentUser;
   }
-/*
-  public doPOST(url, message) {
-    message = message.append('session', session);
-    return this.httpClient.post(apiURL+url, message);
+
+  public request(url, params) {
+    if(this.getUserInfo() === undefined) {
+      this.logout();
+      return Observable.create(observer => {})
+    }
+
+    let HTTPparams = new HttpParams();
+    Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
+    HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
+    return this.httpClient.post<any>(apiURL+url, HTTPparams/*JSON.stringify(credentials)*/);
   }
-*/
+
   public logout() {
-    let params = new HttpParams();
-    params = params.append('session', this.getUserInfo().session);
-    return Observable.create(observer => {
-      console.log('grospenis');
-      this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
-      this.sucres = data;
-      observer.next(this.sucres.success === 1);
-      console.log('grospenistamer');
-      observer.complete();
-    });
-  });
-}
+    if(this.getUserInfo()) {
+      let params = new HttpParams();
+      params = params.append('session', this.getUserInfo().session);
+      return Observable.create(observer => {
+        this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
+          this.sucres = data;
+          observer.next(this.sucres.success === 1);
+          observer.complete();
+        });
+      }).subscribe(data => {
+        if(data) {
+          this.events.publish('log:change', false);
+          this.app.getRootNav().setRoot('LoginPage');
+        }
+      });
+    }
+    else
+      this.app.getRootNav().setRoot('LoginPage');
+  }
+
 }

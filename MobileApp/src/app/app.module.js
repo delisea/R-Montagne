@@ -12,8 +12,10 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http/';
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
+import { AccountPage } from '../pages/account/account';
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -21,17 +23,20 @@ var AppModule = /** @class */ (function () {
         NgModule({
             declarations: [
                 MyApp,
-                MapPage
+                MapPage,
+                AccountPage,
             ],
             imports: [
                 BrowserModule,
                 HttpModule,
-                IonicModule.forRoot(MyApp, {})
+                IonicModule.forRoot(MyApp, {}),
+                HttpClientModule
             ],
             bootstrap: [IonicApp],
             entryComponents: [
                 MyApp,
-                MapPage
+                MapPage,
+                AccountPage,
             ],
             providers: [
                 StatusBar,
