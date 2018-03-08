@@ -10,26 +10,51 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component } from '@angular/core';
 import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
+import { HttpParams } from '@angular/common/http/';
 var RegisterPage = /** @class */ (function () {
     function RegisterPage(nav, auth, alertCtrl) {
         this.nav = nav;
         this.auth = auth;
         this.alertCtrl = alertCtrl;
         this.createSuccess = false;
-        this.registerCredentials = { username: '', password: '' };
+        this.registerCredentials = { name: '', firstName: '', email: '', phone: '', address: '', username: '', password: '' };
+        this.isRescue = false;
     }
     RegisterPage.prototype.register = function () {
         var _this = this;
-        this.auth.register(this.registerCredentials).subscribe(function (success) {
-            if (success) {
-                _this.createSuccess = true;
-                _this.showPopup("Success", "Account created.");
-            }
+        /*
+        this.auth.register(this.registerCredentials).subscribe(success => {
+          if (success) {
+            this.createSuccess = true;
+            this.showPopup("Success", "Account created.");
+          } else {
+            this.showPopup("Error", "Problem creating account.");
+          }
+        },
+          error => {
+            this.showPopup("Error", error);
+          });
+        */
+        var params = new HttpParams();
+        params = params.append('name', this.registerCredentials.name);
+        params = params.append('firstName', this.registerCredentials.firstName);
+        params = params.append('email', this.registerCredentials.email);
+        params = params.append('phone', this.registerCredentials.phone);
+        params = params.append('address', this.registerCredentials.address);
+        params = params.append('username', this.registerCredentials.username);
+        params = params.append('password', this.registerCredentials.password);
+        params = params.append('rescuer', String(this.isRescue));
+        this.auth.register(params).subscribe(function (data) {
+            if (data)
+                _this.nav.setRoot('LoginPage');
             else {
-                _this.showPopup("Error", "Problem creating account.");
+                //popup à faire pour dire que pas bon
             }
+            /* else {
+              this.showError("Access Denied");
+            }*/
         }, function (error) {
-            _this.showPopup("Error", error);
+            console.log(error);
         });
     };
     RegisterPage.prototype.showPopup = function (title, text) {

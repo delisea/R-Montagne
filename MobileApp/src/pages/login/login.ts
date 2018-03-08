@@ -27,7 +27,7 @@ export class LoginPage {
       params = params.append('password', this.registerCredentials.password);
       this.auth.login(params).subscribe(data => {
         if(data) {
-          this.app.getRootNav().setRoot(MapPage);
+          //this.app.getRootNav().setRoot(MapPage);
         }
         else{
           //popup à faire pour dire que pas bon

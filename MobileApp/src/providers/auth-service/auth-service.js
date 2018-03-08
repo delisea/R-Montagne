@@ -9,78 +9,87 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Http } from '@angular/http';
+import { HttpParams, HttpClient } from '@angular/common/http/';
+//import { LoginPage } from '../../pages/login/login';
+import { App } from 'ionic-angular';
+import { Events } from 'ionic-angular';
 import 'rxjs/add/operator/map';
-var apiURL = 'http://closed.power-heberg.com/RMontagne/api/user/';
+var apiURL = 'http://closed.power-heberg.com/RMontagne/api/';
+var response;
 var User = /** @class */ (function () {
-    function User(name, username) {
-        this.name = name;
-        this.username = username;
+    function User(session, logInfos) {
+        this.session = session;
+        this.logInfos = logInfos;
     }
     return User;
 }());
 export { User };
 var AuthService = /** @class */ (function () {
-    function AuthService(http) {
-        this.http = http;
+    function AuthService(events, app, httpClient) {
+        this.events = events;
+        this.app = app;
+        this.httpClient = httpClient;
     }
-    /*
-      public login(credentials) {
-        if (credentials.username === null) {
-          return Observable.throw("Please insert credentials");
-        } else {
-          return Observable.create(observer => {
-            // At this point make a request to your backend to make a real check!
-            let access = (credentials.username === "username");
-            this.currentUser = new User('Simon', 'saimon@devdactic.com');
-            observer.next(access);
-            observer.complete();
-          });
-        }
-      }
-      */
     AuthService.prototype.login = function (credentials) {
-        /*
-         return new Promise((resolve, reject) => {
-         let headers = new Headers();
-         headers.append('Content-Type', 'application/json');
- 
-         this.http.post(apiURL+'findbyusername.php', JSON.stringify(credentials), {headers: headers})
-           .subscribe(res => {
-             resolve(res.json());
-           }, (err) => {
-             reject(err);
-           });
-           */
-        console.log(JSON.stringify(credentials));
-        return this.http.post(apiURL + 'findbyusername.php', JSON.stringify(credentials));
-    };
-    AuthService.prototype.register = function (credentials) {
-        if (credentials.username === null || credentials.password === null) {
-            return Observable.throw("Please insert credentials");
-        }
-        else {
-            // At this point store the credentials to your backend!
-            return Observable.create(function (observer) {
-                observer.next(true);
+        var _this = this;
+        return Observable.create(function (observer) {
+            _this.httpClient.post(apiURL + 'user/login.php', credentials).subscribe(function (data) {
+                _this.logres = data;
+                _this.currentUser = new User(_this.logres.session, _this.logres.user);
+                console.log(_this.currentUser);
+                observer.next(_this.logres.success === 1);
+                _this.events.publish('log:change', _this.logres.success === 1);
                 observer.complete();
             });
-        }
+        });
+    };
+    AuthService.prototype.register = function (credentials) {
+        var _this = this;
+        return Observable.create(function (observer) {
+            _this.httpClient.post(apiURL + 'user/register.php', credentials).subscribe(function (data) {
+                _this.regres = data;
+                observer.next(_this.regres.success === 1);
+                observer.complete();
+            });
+        });
     };
     AuthService.prototype.getUserInfo = function () {
         return this.currentUser;
     };
+    AuthService.prototype.request = function (url, params) {
+        if (this.getUserInfo() === undefined) {
+            this.logout();
+            return Observable.create(function (observer) { });
+        }
+        var HTTPparams = new HttpParams();
+        Object.keys(params).forEach(function (key) { return HTTPparams = HTTPparams.append(key, params[key]); });
+        HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
+        return this.httpClient.post(apiURL + url, HTTPparams /*JSON.stringify(credentials)*/);
+    };
     AuthService.prototype.logout = function () {
         var _this = this;
-        return Observable.create(function (observer) {
-            _this.currentUser = null;
-            observer.next(true);
-            observer.complete();
-        });
+        if (this.getUserInfo()) {
+            var params_1 = new HttpParams();
+            params_1 = params_1.append('session', this.getUserInfo().session);
+            return Observable.create(function (observer) {
+                _this.httpClient.post(apiURL + 'user/logout.php', params_1).subscribe(function (data) {
+                    _this.sucres = data;
+                    observer.next(_this.sucres.success === 1);
+                    observer.complete();
+                });
+            }).subscribe(function (data) {
+                if (data) {
+                    _this.events.publish('log:change', false);
+                    _this.app.getRootNav().setRoot('LoginPage');
+                }
+            });
+        }
+        else
+            this.app.getRootNav().setRoot('LoginPage');
     };
     AuthService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [Http])
+        __metadata("design:paramtypes", [Events, App, HttpClient])
     ], AuthService);
     return AuthService;
 }());

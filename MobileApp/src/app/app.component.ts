@@ -16,14 +16,12 @@ export class MyApp {
   rootPage:any = 'LoginPage';
   logged:boolean = false;
 
-  pages: Array<{title: string, component: any}>;
+  pages: Array<{title: string, component: any, param: number}>;
 
   constructor(private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Account', component: AccountPage },
-      { title: 'Map', component: MapPage },
-      { title: 'Login', component: 'LoginPage' }
+      { title: 'Account', component: AccountPage , param: 0}
     ];
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -32,7 +30,15 @@ export class MyApp {
       splashScreen.hide();
       events.subscribe('log:change', (state) => {
         this.logged = state;
-        //console.log('logged in', success);
+        if(this.logged) {
+          this.auth.request("watch/read.php", {}).subscribe(data => {
+            //console.log(data);
+            for(var m of data.maps) {
+              this.pages.push({ title: 'Map: '+m.name, component: MapPage, param: m.idMap });
+            }
+            this.openPage(this.pages[1]);
+          });
+        }
       });
     });
   }
@@ -40,8 +46,10 @@ export class MyApp {
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    console.log("move");
-    this.nav.setRoot(page.component);
+    //console.log("move" + page.param);
+    this.nav.setRoot(page.component, {
+      param: page.param
+    });
   }
 
    logout() {

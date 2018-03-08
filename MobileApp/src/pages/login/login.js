@@ -10,44 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component } from '@angular/core';
 import { NavController, AlertController, LoadingController, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
+import { HttpParams } from '@angular/common/http/';
+import { MapPage } from '../map/map';
+import { App } from 'ionic-angular';
 var LoginPage = /** @class */ (function () {
-    function LoginPage(nav, auth, alertCtrl, loadingCtrl) {
+    function LoginPage(app, nav, auth, alertCtrl, loadingCtrl) {
+        this.app = app;
         this.nav = nav;
         this.auth = auth;
         this.alertCtrl = alertCtrl;
         this.loadingCtrl = loadingCtrl;
         this.registerCredentials = { username: '', password: '' };
-        this.flag = false;
     }
     LoginPage.prototype.createAccount = function () {
         this.nav.push('RegisterPage');
     };
     LoginPage.prototype.login = function () {
         var _this = this;
-        /*
-        this.showLoading()
-        this.auth.login(this.registerCredentials).then(allowed => {
-          if (allowed) {
-            this.nav.setRoot('MenuPage');
-          } else {
-            this.showError("Access Denied");
-          }
-        },
-          error => {
-            this.showError(error);
-          });
-          */
-        if (this.flag)
-            return;
-        this.flag = true;
-        this.auth.login(this.registerCredentials)..then(function (allowed) {
-            if (allowed) {
-                console.log("grospenis");
-                _this.nav.setRoot('MenuPage');
+        var params = new HttpParams();
+        params = params.append('username', this.registerCredentials.username);
+        params = params.append('password', this.registerCredentials.password);
+        this.auth.login(params).subscribe(function (data) {
+            if (data) {
+                _this.app.getRootNav().setRoot(MapPage);
             }
             else {
-                _this.showError("Access Denied");
+                //popup à faire pour dire que pas bon
             }
+        }, function (error) {
+            console.log(error);
         });
     };
     LoginPage.prototype.showLoading = function () {
@@ -57,22 +48,13 @@ var LoginPage = /** @class */ (function () {
         });
         this.loading.present();
     };
-    LoginPage.prototype.showError = function (text) {
-        this.loading.dismiss();
-        var alert = this.alertCtrl.create({
-            title: 'Fail',
-            subTitle: text,
-            buttons: ['OK']
-        });
-        alert.present(prompt);
-    };
     LoginPage = __decorate([
         IonicPage(),
         Component({
             selector: 'page-login',
             templateUrl: 'login.html',
         }),
-        __metadata("design:paramtypes", [NavController, AuthService, AlertController, LoadingController])
+        __metadata("design:paramtypes", [App, NavController, AuthService, AlertController, LoadingController])
     ], LoginPage);
     return LoginPage;
 }());

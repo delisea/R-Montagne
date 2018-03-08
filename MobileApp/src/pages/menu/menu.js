@@ -9,14 +9,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, Nav } from 'ionic-angular';
+import { MapPage } from '../map/map';
+import { AccountPage } from '../account/account';
+import { App } from 'ionic-angular';
 var MenuPage = /** @class */ (function () {
-    function MenuPage(navCtrl) {
+    function MenuPage(app, navCtrl) {
+        this.app = app;
         this.navCtrl = navCtrl;
         // Basic root for our content view
-        this.rootPage = 'TabsPage';
+        this.rootPage = MapPage;
         this.pages = [
-            { title: 'Tabs', pageName: 'TabsPage', tabComponent: 'Tab1Page', index: 0, icon: 'home' },
-            { title: 'Register', pageName: 'RegisterPage', tabComponent: 'RegisterPage', index: 1, icon: 'home' }
+            { title: 'Map', pageName: 'MapPage', tabComponent: 'MapPage', index: 0, icon: 'map-custom', pageComponent: MapPage },
+            { title: 'Account', pageName: 'AccountPage', tabComponent: 'AccountPage', index: 1, icon: 'contact-custom', pageComponent: AccountPage }
         ];
     }
     MenuPage.prototype.openPage = function (page) {
@@ -32,7 +36,8 @@ var MenuPage = /** @class */ (function () {
         else {
             // Tabs are not active, so reset the root page
             // In this case: moving to or from SpecialPage
-            this.nav.setRoot(page.pageName, params);
+            //this.nav.setRoot(page.pageName, params);
+            this.app.getRootNav().setRoot(page.pageComponent);
         }
     };
     MenuPage.prototype.isActive = function (page) {
@@ -60,7 +65,7 @@ var MenuPage = /** @class */ (function () {
             selector: 'page-menu',
             templateUrl: 'menu.html',
         }),
-        __metadata("design:paramtypes", [NavController])
+        __metadata("design:paramtypes", [App, NavController])
     ], MenuPage);
     return MenuPage;
 }());
