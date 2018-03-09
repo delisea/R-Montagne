@@ -1,9 +1,13 @@
 page-menu {
   .ion-md-map-custom {
-    content: url("../../assets/imgs/map.png") !important;
+    content: url("assets/imgs/map.png") !important;
   }
 
   .ion-md-contact-custom {
-    content: url("../../assets/imgs/contact.png") !important;
+    content: url("assets/imgs/contact.png") !important;
+  }
+
+  ion-icon.side-panel {
+    color: #dab671;
   }
 }
