@@ -1,43 +1,61 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/user.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$user = new User($db);
+if (isset($_POST['session'])) {
 
-$stmt = $user->read();
-$num = $stmt->rowCount();
+    session_id($_POST['session']);
+    session_start();
 
-if ($num > 0) {
+    if (isset($_SESSION['id'])) {
 
-    $users_arr = array();
-    $users_arr["records"] = array();
+        $arr = array();
+        $arr['users'] = array();
 
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
+        $query = 'SELECT id, name, firstName, username, email, phone, address, rescuer FROM User';
 
-        $user_item = array(
-            "id" => $id,
-            "name" => $name,
-            "firstName" => $firstName,
-            "username" => $username,
-            "email" => $email,
-            "phone" => $phone,
-            "address" => $address
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+        $num = $stmt->rowCount();
+
+        if (num > 0) {
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+                extract($row);
+
+                $entry = array(
+                    'id' => $id,
+                    'name' => $name,
+                    'firstName' => $firstName,
+                    'username' => $username,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'address' => $address,
+                    'rescuer' => $rescuer
+                );
+
+                array_push($arr['users'], $entry);
+            }
+        }
+
+        $arr['success'] = 1;
+        echo json_encode($arr);
+    } else {
+        echo json_encode(
+            array('success' => 0, 'message' => 'Invalid session')
         );
- 
-        array_push($users_arr["records"], $user_item);
     }
- 
-    echo json_encode($users_arr);
 } else {
     echo json_encode(
-        array("message" => "No users found.")
+        array('success' => 0, 'message' => 'Invalid parameters')
     );
 }
-?>

@@ -11,106 +11,115 @@ $database = new Database();
 $db = $database->getConnection();
 
 if (isset($_POST['session']) && isset($_POST['map'])) {
+	
 	session_id($_POST['session']);
 	session_start();
 
-	$id = $_SESSION['id'];
-	$map = htmlspecialchars(strip_tags($_POST['map']));
+	if (isset($_SESSION['id'])) {
 
-	$arr = array();
+		$id = $_SESSION['id'];
+		$map = htmlspecialchars(strip_tags($_POST['map']));
 
-	$query = 'SELECT h.date, h.latitude, h.longitude, h.alert, h.map FROM Historic as h, Tracker as t, User as u WHERE u.id=t.idUser AND t.idTracker=h.idTracker AND u.id=:id AND h.map=:map ORDER BY h.date DESC';
+		$arr = array();
 
-	$stmt = $db->prepare($query);
-	$stmt->bindParam('id', $id);
-	$stmt->bindParam('map', $map);
-	$stmt->execute();
-	$num = $stmt->rowCount();
+		$query = 'SELECT h.date, h.latitude, h.longitude, h.alert, h.map FROM Historic as h, Tracker as t, User as u WHERE u.id=t.idUser AND t.idTracker=h.idTracker AND u.id=:id AND h.map=:map ORDER BY h.date DESC';
 
-	if ($num > 0) {
-		$self = array();
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+		$stmt->bindParam('map', $map);
+		$stmt->execute();
+		$num = $stmt->rowCount();
 
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			extract($row);
+		if ($num > 0) {
+			$self = array();
 
-			$entry = array(
-				'date' => $date,
-				'latitude' => $latitude,
-				'longitude' => $longitude,
-				'alert' => $alert,
-				'map' => $map
-			);
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				extract($row);
 
-			array_push($self, $entry);
+				$entry = array(
+					'date' => $date,
+					'latitude' => $latitude,
+					'longitude' => $longitude,
+					'alert' => $alert,
+					'map' => $map
+				);
+
+				array_push($self, $entry);
+			}
+
+			$arr['self'] = $self;
+		} else {
+			$arr['self'] = array();
 		}
 
-		$arr['self'] = $self;
-	} else {
-		$arr['self'] = array();
-	}
+		$query = 'SELECT h.idTracker, h.date, h.latitude, h.latitude, h.longitude, h.alert, h.map FROM Historic as h, (SELECT h.idTracker, MAX(h.date) as md FROM Historic as h WHERE idTracker!=:id GROUP BY h.idTracker) as hm WHERE h.date=hm.md AND h.map=:map';
 
-	$query = 'SELECT h.idTracker, h.date, h.latitude, h.latitude, h.longitude, h.alert, h.map FROM Historic as h, (SELECT h.idTracker, MAX(h.date) as md FROM Historic as h WHERE idTracker!=:id GROUP BY h.idTracker) as hm WHERE h.date=hm.md AND h.map=:map';
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+		$stmt->bindParam('map', $map);
+		$stmt->execute();
+		$num = $stmt->rowCount();
 
-	$stmt = $db->prepare($query);
-	$stmt->bindParam('id', $id);
-	$stmt->bindParam('map', $map);
-	$stmt->execute();
-	$num = $stmt->rowCount();
+		if ($num > 0) {
+			$others = array();
 
-	if ($num > 0) {
-		$others = array();
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				extract($row);
 
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			extract($row);
+				$entry = array(
+					'idTracker' => $idTracker,
+					'date' => $date,
+					'latitude' => $latitude,
+					'longitude' => $longitude,
+					'alert' => $alert,
+					'map' => $map
+				);
 
-			$entry = array(
-				'idTracker' => $idTracker,
-				'date' => $date,
-				'latitude' => $latitude,
-				'longitude' => $longitude,
-				'alert' => $alert,
-				'map' => $map
-			);
+				array_push($others, $entry);
+			}
 
-			array_push($others, $entry);
+			$arr['others'] = $others;
+		} else {
+			$arr['others'] = array();
 		}
 
-		$arr['others'] = $others;
-	} else {
-		$arr['others'] = array();
-	}
+		$query = 'SELECT b.id, b.latitude, b.longitude, b.map FROM Beacon as b WHERE b.map=:map';
 
-	$query = 'SELECT b.idBeacon, b.latitude, b.longitude, b.map FROM Beacon as b WHERE b.map=:map';
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('map', $map);
+		$stmt->execute();
+		$num = $stmt->rowCount();
 
-	$stmt = $db->prepare($query);
-	$stmt->bindParam('map', $map);
-	$stmt->execute();
-	$num = $stmt->rowCount();
+		if ($num > 0) {
+			$beacons = array();
 
-	if ($num > 0) {
-		$beacons = array();
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				extract($row);
 
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			extract($row);
+				$entry = array(
+					'id' => $id,
+					'latitude' => $latitude,
+					'longitude' => $longitude,
+					'map' => $map
+				);
 
-			$entry = array(
-				'idBeacon' => $idBeacon,
-				'latitude' => $latitude,
-				'longitude' => $longitude,
-				'map' => $map
-			);
+				array_push($beacons, $entry);
+			}
 
-			array_push($beacons, $entry);
+			$arr['beacons'] = $beacons;
+		} else {
+			$arr['beacons'] = array();
 		}
 
-		$arr['beacons'] = $beacons;
+		$arr['success'] = 1;
+		echo json_encode($arr);
 	} else {
-		$arr['beacons'] = array();
+		echo json_encode(
+			array('success' => 0, 'message' => 'Invalid session')
+		);
 	}
-
-	echo json_encode($arr);
 } else {
 	echo json_encode(
-		array('message' => 'Incorrect session, please log in')
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }

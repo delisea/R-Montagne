@@ -6,7 +6,6 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/user.php';
 
 $database = new Database();
 $db = $database->getConnection();
@@ -16,35 +15,41 @@ if (isset($_POST['session']) && isset($_POST['name']) && isset($_POST['firstName
 	session_id($_POST['session']);
 	session_start();
 
-	$id = $_SESSION['id'];
-	$name = htmlspecialchars(strip_tags($_POST['name']));
-	$firstName = htmlspecialchars(strip_tags($_POST['firstName']));
-	$email = htmlspecialchars(strip_tags($_POST['email']));
-	$phone = htmlspecialchars(strip_tags($_POST['phone']));
-	$address = htmlspecialchars(strip_tags($_POST['address']));
+	if (isset($_SESSION['id'])) {
 
-	$query = 'UPDATE User as u SET u.name=:name, u.firstName=:firstName, u.email=:email, u.phone=:phone, u.address=:address WHERE u.id=:id';
+		$id = $_SESSION['id'];
+		$name = htmlspecialchars(strip_tags($_POST['name']));
+		$firstName = htmlspecialchars(strip_tags($_POST['firstName']));
+		$email = htmlspecialchars(strip_tags($_POST['email']));
+		$phone = htmlspecialchars(strip_tags($_POST['phone']));
+		$address = htmlspecialchars(strip_tags($_POST['address']));
 
-	$stmt = $db->prepare($query);
-	$stmt->bindParam('id', $id);
-	$stmt->bindParam('name', $name);
-	$stmt->bindParam('firstName', $firstName);
-	$stmt->bindParam('email', $email);
-	$stmt->bindParam('phone', $phone);
-	$stmt->bindParam('address', $address);
+		$query = 'UPDATE User as u SET u.name=:name, u.firstName=:firstName, u.email=:email, u.phone=:phone, u.address=:address WHERE u.id=:id';
 
-	if ($stmt->execute()) {
-		echo json_encode(
-			array('success' => 1)
-		);
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+		$stmt->bindParam('name', $name);
+		$stmt->bindParam('firstName', $firstName);
+		$stmt->bindParam('email', $email);
+		$stmt->bindParam('phone', $phone);
+		$stmt->bindParam('address', $address);
+
+		if ($stmt->execute()) {
+			echo json_encode(
+				array('success' => 1, 'message' => 'User successfully updated')
+			);
+		} else {
+			echo json_encode(
+				array('success' => 0, 'message' => 'An error has occured')
+			);
+		}
 	} else {
 		echo json_encode(
-			array('success' => 0)
+			array('success' => 0, 'message' => 'Invalid session')
 		);
 	}
 } else {
     echo json_encode(
-        array('success' => 0)
+        array('success' => 0, 'message' => 'Invalid parameters')
     );
 }
-?>

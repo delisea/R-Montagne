@@ -3,36 +3,50 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 include_once '../config/database.php';
-include_once '../objects/tracker.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$tracker = new Tracker($db);
+if (isset($_POST['session'])) {
 
-$stmt = $tracker->read();
-$num = $stmt->rowCount();
+	session_id($_POST['session']);
+	session_start();
 
-if($num>0) {
+	if (isset($_SESSION['id'])) {
 
-	$trackers_arr=array();
-	$trackers_arr["records"]=array();
+		$arr = array();
+		$arr['trackers'] = array();
 
-	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		extract($row);
+		$query = 'SELECT idTracker, idUser FROM Tracker';
 
-		$tracker_item=array(
-			"idTracker" => $idTracker,
-			"idUser" => $idUser
+		$stmt = $db->prepare($query);
+		$stmt->execute();
+		$num = $stmt->rowCount();
+
+		if (num > 0) {
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+				extract($row);
+
+				$entry = array(
+					'idTracker', $idTracker,
+					'idUser', $idUser
+				);
+
+				array_push($arr['trackers'], $entry);
+			}
+		}
+
+		$arr['success'] = 1;
+		echo json_encode($arr);
+	} else {
+		echo json_encode(
+			array('success' => 0, 'message' => 'Invalid session')
 		);
-
-		array_push($trackers_arr["records"], $tracker_item);
 	}
-
-	echo json_encode($trackers_arr);
 } else {
 	echo json_encode(
-		array("message" => "No trackers found.")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>

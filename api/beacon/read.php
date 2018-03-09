@@ -1,38 +1,57 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/beacon.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$beacon = new Beacon($db);
+if (isset($_POST['session'])) {
 
-$stmt = $beacon->read();
-$num = $stmt->rowCount();
+	session_id($_POST['session']);
+	session_start();
 
-if ($num > 0) {
+	if (isset($_SESSION['id'])) {
 
-	$beacons_arr = array();
-	$beacons_arr["records"] = array();
+		$arr = array();
+		$arr['beacons'] = array();
 
-	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		extract($row);
+		$query = 'SELECT id, latitude, longitude, map FROM Beacon';
 
-		$beacon_item = array(
-			"idBeacon" => $idBeacon,
-			"position" => $position
+		$stmt = $db->prepare($query);
+		$stmt->execute();
+		$num = $stmt->rowCount();
+
+		if (num > 0) {
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+				extract($row);
+
+				$entry = array(
+					'id' => $id,
+					'latitude' => $latitude,
+					'longitude' => $longitude,
+					'map' => $map
+				);
+
+				array_push($arr['beacons'], $entry);
+			}
+		}
+
+		$arr['success'] = 1;
+		echo json_encode($arr);
+	} else {
+		echo json_encode(
+			array('success' => 0, 'message' => 'Invalid session')
 		);
-
-		array_push($beacons_arr["records"], $beacon_item);
 	}
-
-	echo json_encode($beacons_arr);
 } else {
 	echo json_encode(
-		array("message" => "No beacons found.")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>

@@ -33,7 +33,7 @@ if (isset($_POST['username'])) {
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
 			extract($row);
 
-			$wallah = array(
+			$temp = array(
 				'id' => $id
 			);
 			$user = array(
@@ -50,21 +50,21 @@ if (isset($_POST['username'])) {
 
 			session_start();
 			$arr['session'] = session_id();
-			$_SESSION['id'] = $wallah['id'];
+			$_SESSION['id'] = $temp['id'];
 
 			echo json_encode($arr);
 		} else {
 			echo json_encode(
-				array('success' => 0, 'text' => 'Bad username or password')
+				array('success' => 0, 'message' => 'Bad username or password')
 			);
 		}
 	} else {
 		echo json_encode(
-			array('success' => 0, 'text' => 'No password given')
+			array('success' => 0, 'message' => 'No password given')
 		);
 	}
 } else {
 	echo json_encode(
-		array('success' => 0, 'text' => 'No username given')
+		array('success' => 0, 'message' => 'No username given')
 	);
 }

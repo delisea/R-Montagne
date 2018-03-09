@@ -15,43 +15,43 @@ if (isset($_POST['session'])) {
 	session_id($_POST['session']);
 	session_start();
 
-	$id = $_SESSION['id'];
+	if (isset($_SESSION['id'])) {
 
-	$arr = array();
+		$id = $_SESSION['id'];
 
-	$query = 'SELECT w.idMap, m.name FROM Watch as w, Map as m WHERE w.idUser=:id AND m.id=w.idMap';
+		$arr = array();
+		$arr['maps'] = array();
 
-	$stmt = $db->prepare($query);
-	$stmt->bindParam('id', $id);
-	$stmt->execute();
-	$num = $stmt->rowCount();
+		$query = 'SELECT w.idMap, m.name FROM Watch as w, Map as m WHERE w.idUser=:id AND m.id=w.idMap';
 
-	if ($num > 0) {
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+		$stmt->execute();
+		$num = $stmt->rowCount();
 
-		$entries = array();
+		if ($num > 0) {
 
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			extract($row);
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				extract($row);
 
-			$entry = array(
-				'idMap' => $idMap,
-				'name' => $name
-			);
+				$entry = array(
+					'idMap' => $idMap,
+					'name' => $name
+				);
 
-			array_push($entries, $entry);
+				array_push($arr['maps'], $entry);
+			}
 		}
 
 		$arr['success'] = 1;
-		$arr['maps'] = $entries;
-
 		echo json_encode($arr);
 	} else {
 		echo json_encode(
-			array('success' => 0)
+			array('success' => 0, 'message' => 'Invalid session')
 		);
 	}
 } else {
 	echo json_encode(
-		array('success' => 0)
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }

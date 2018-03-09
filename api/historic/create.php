@@ -6,7 +6,6 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/historic.php';
  
 $database = new Database();
 $db = $database->getConnection();
@@ -29,15 +28,15 @@ if (isset($_POST['id']) && isset($_POST['latitude']) && isset($_POST['longitude'
 	$stmt->bindParam('map', $map);
 	if ($stmt->execute()) {
 		echo json_encode(
-			array('success' => 1)
+			array('success' => 1, 'message' => 'Historic entry successfully created')
 		);
 	} else {
 		echo json_encode(
-			array('success' => 2)
+			array('success' => 0, 'message' => 'An error has occured')
 		);
 	}
 } else {
 	echo json_encode(
-		array('success' => 0)
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }

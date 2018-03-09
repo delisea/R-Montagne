@@ -6,29 +6,42 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/tracker.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$tracker = new Tracker($db);
+if (isset($_POST['session']) && isset($_POST['idTracker']) && isset($_POST['idUser'])) {
 
-if (isset($_POST['idTracker']) && isset($_POST['idUser'])) {
-	$tracker->idTracker = $_POST['idTracker'];
-	$tracker->idUser = $_POST['idUser'];
+	session_id($_POST['session']);
+	session_start();
 
-	if ($tracker->create()) {
-		echo json_encode(
-			array("message" => "Tracker was created.")
-		);
+	if (isset($_SESSION['id'])) {
+
+		$idTracker = htmlspecialchars(strip_tags($_POST['idTracker']));
+		$idUser = htmlspecialchars(strip_tags($_POST['idUser']));
+
+		$query = 'INSERT INTO Tracker SET idTracker=:idTracker, idUser=:idUser';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('idTracker', $idTracker);
+		$stmt->bindParam('idUser', $idUser);
+
+		if ($stmt->execute()) {
+			echo json_encode(
+				array('success' => 1, 'message' => 'Tracker successfully created')
+			);
+		} else {
+			echo json_encode(
+				array('success' => 0, 'message' => 'An error has occured')
+			);
+		}
 	} else {
 		echo json_encode(
-			array("message" => "Unable to create tracker.")
+			array('success' => 0, 'message' => 'Invalid session')
 		);
 	}
 } else {
 	echo json_encode(
-		array("message" => "Unable to create tracker.")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>

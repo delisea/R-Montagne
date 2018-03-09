@@ -33,17 +33,18 @@ if (isset($_POST['name']) && isset($_POST['firstName']) && isset($_POST['usernam
 	$stmt->bindParam('phone', $phone);
 	$stmt->bindParam('address', $address);
 	$stmt->bindParam('password', $password);
+	
 	if ($stmt->execute()) {
 		echo json_encode(
-			array('success' => 1, 'text' => 'User successfully created')
+			array('success' => 1, 'message' => 'User successfully created')
 		);
 	} else {
 		echo json_encode(
-			array('success' => 0, 'text' => 'User cannot be created')
+			array('success' => 0, 'message' => 'An error has occured')
 		);
 	}
 } else {
 	echo json_encode(
-		array('success' => 0, 'text' => 'Missing parameter(s)')
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }

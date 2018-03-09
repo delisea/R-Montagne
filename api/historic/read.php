@@ -1,40 +1,59 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/historic.php';
- 
+
 $database = new Database();
 $db = $database->getConnection();
 
-$historic = new Historic($db);
+if (isset($_POST['session'])) {
 
-$stmt = $historic->read();
-$num = $stmt->rowCount();
+	session_id($_POST['sessoin']);
+	session_start();
 
-if ($num > 0) {
+	if (isset($_SESSION['id'])) {
 
-	$historics_arr = array();
-	$historics_arr["records"] = array();
+		$arr = array();
+		$arr['historics'] = array();
 
-	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		extract($row);
+		$query = 'SELECT idTracker, date, latitude, longitude, alert, map FROM Historic';
 
-		$historic_item = array(
-			"idTracker" => $idTracker,
-			"date" => $date,
-			"position" => $position,
-			"alert" => $alert
+		$stmt = $db->prepare($query);
+		$stmt->execute();
+		$num = $stmt->rowCount();
+
+		if (num > 0) {
+
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+				extract($row);
+
+				$entry = array(
+					'idTracker' => $idTracker,
+					'date' => $date,
+					'latitude' => $latitude,
+					'longitude' => $longitude,
+					'alert' => $alert,
+					'map' => $map
+				);
+
+				array_push($arr['historics'], $entry);
+			}
+		}
+
+		$arr['success'] = 1;
+		echo json_encode($arr);
+	} else {
+		echo json_encode(
+			array('success' => 0, 'message' => 'Invalid session')
 		);
-
-		array_push($historics_arr["records"], $historic_item);
 	}
-
-	echo json_encode($historics_arr);
 } else {
 	echo json_encode(
-		array("message" => "No historic entry found.")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>

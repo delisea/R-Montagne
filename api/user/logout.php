@@ -12,10 +12,10 @@ if (isset($_POST['session'])) {
 	session_destroy();
 
 	echo json_encode(
-		array('success' => 1)
+		array('success' => 1, 'message' => 'User successfully logged out')
 	);
 } else {
 	echo json_encode(
-		array('success' => 0)
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }

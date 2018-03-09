@@ -6,28 +6,40 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/beacon.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$beacon = new Beacon($db);
+if (isset($_POST['session']) && isset($_POST['id'])) {
 
-if (isset($_POST['idBeacon'])) {
-	$beacon->idBeacon = $_POST['idBeacon'];
+	session_id($_POST['session']);
+	session_start();
 
-	if ($beacon->delete()) {
-		echo json_encode(
-			array("message" => "Beacon was deleted.")
-		);
+	if (isset($_SESSION['id'])) {
+
+		$id = htmlspecialchars(strip_tags($_POST['id']));
+
+		$query = 'DELETE FROM Beacon WHERE id=:id';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+
+		if ($stmt->execute()) {
+			echo json_encode(
+				array('success' => 1, 'message' => 'Beacon successfully deleted')
+			);
+		} else {
+			echo json_encode(
+				array('success' => 0, 'message' => 'An error has occured')
+			);
+		}
 	} else {
 		echo json_encode(
-			array("message" => "Unable to delete beacon.")
+			array('success' => 0, 'message' => 'Invalid session')
 		);
 	}
 } else {
 	echo json_encode(
-		array("message" => "Unable to delete beacon.")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>

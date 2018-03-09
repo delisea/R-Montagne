@@ -6,28 +6,40 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/tracker.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$tracker = new Tracker($db);
+if (isset($_POST['session']) && isset($_POST['idTracker'])) {
 
-if (isset($_POST['idTracker'])) {
-	$tracker->idTracker = $_POST['idTracker'];
+	session_id($_POST['session']);
+	session_start();
 
-	if ($tracker->delete()) {
-		echo json_encode(
-			array("message" => "Tracker was deleted.")
-		);
+	if (isset($_SESSION['id'])) {
+
+		$idTracker = htmlspecialchars(strip_tags($_POST['idTracker']));
+
+		$query = 'DELETE FROM Tracker WHERE idTracker=:idTracker';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('idTracker', $idTracker);
+
+		if ($stmt->execute()) {
+			echo json_encode(
+				array('success' => 1, 'message' => 'Tracker successfully deleted')
+			);
+		} else {
+			echo json_encode(
+				array('success' => 0, 'message' => 'An error has occured')
+			);
+		}
 	} else {
 		echo json_encode(
-			array("message" => "Unable to delete tracker.")
+			array('success' => 0, 'message' => 'Invalid session')
 		);
 	}
 } else {
 	echo json_encode(
-		array("message" => "Unable to delete tracker")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>
