@@ -6,9 +6,9 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
+  <ion-content class="menu">
     <ion-list>
-      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
+      <button class="menu" menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
         {{p.title}}
       </button>
     </ion-list>
@@ -21,7 +21,7 @@
         <ion-icon name="menu"></ion-icon>
       </button>
       <ion-title>
-        Account
+        {{rootPageName}}
       </ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="logout()">
