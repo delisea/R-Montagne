@@ -4,7 +4,7 @@ import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams, HttpClient } from '@angular/common/http/';
 import { MapPage } from '../map/map';
 import {App} from 'ionic-angular';
-import { Events } from 'ionic-angular';
+import { Events, ToastController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -15,7 +15,16 @@ export class LoginPage {
   loading: Loading;
   registerCredentials = { username: '', password: '' };
 
-  constructor(private app:App, private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController) { }
+  constructor(private app:App, private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) { }
+
+  showToast(position: string) {
+    const toast = this.toastCtrl.create({
+      message: 'Login or Password incorrect',
+      position: position,
+      duration: 3000
+    });
+    toast.present();
+  }
 
   public createAccount() {
     this.nav.push('RegisterPage');
@@ -30,7 +39,7 @@ export class LoginPage {
           //this.app.getRootNav().setRoot(MapPage);
         }
         else{
-          //popup à faire pour dire que pas bon
+          this.showToast("bottom");
         }
       }, error => {
             console.log(error);
