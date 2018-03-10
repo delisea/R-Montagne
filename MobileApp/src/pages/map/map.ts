@@ -163,7 +163,13 @@ IconBlue: any;
         //this.nav.setRoot('MenuPage');
         //if(data.self[0] != undefined) {
           this.auth.request("map/get.php", {map : this.mapId/*data.self[0].map*/}).subscribe(data => {
-            this.map.setView([Number(data.map.centerLatitude), Number(data.map.centerLongitude)], data.map.zoom)
+            var mapPolygon = [];
+            for(var point of data.map.polygon)
+              mapPolygon.push([point.longitude, point.latitude]);
+            var polygon = Leaflet.polygon(mapPolygon, {color: 'red'}).addTo(this.map);
+            // zoom the map to the polygon
+            this.map.fitBounds(polygon.getBounds());
+            //this.map.setView([Number(data.map.centerLatitude), Number(data.map.centerLongitude)], data.map.zoom)
           });
         //}
       },
