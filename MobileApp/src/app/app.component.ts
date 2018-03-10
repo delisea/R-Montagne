@@ -17,12 +17,12 @@ export class MyApp {
   logged:boolean = false;
   rootPageName: string = "";
 
-  pages: Array<{title: string, component: any, param: number}>;
+  pages: Array<{title: string, icon: string, component: any, param: number}>;
 
   constructor(private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Account', component: AccountPage , param: 0}
+      { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0}
     ];
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -35,7 +35,7 @@ export class MyApp {
           this.auth.request("watch/read.php", {}).subscribe(data => {
             //console.log(data);
             for(var m of data.maps) {
-              this.pages.push({ title: 'Map: '+m.name, component: MapPage, param: m.idMap });
+              this.pages.push({ title: /*'Map: '+*/m.name, icon: 'map-custom', component: MapPage, param: m.idMap });
             }
             this.rootPageName = this.pages[1].title;
             this.openPage(this.pages[1]);

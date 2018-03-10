@@ -166,7 +166,7 @@ IconBlue: any;
             var mapPolygon = [];
             for(var point of data.map.polygon)
               mapPolygon.push([point.longitude, point.latitude]);
-            var polygon = Leaflet.polygon(mapPolygon, {color: 'red'}).addTo(this.map);
+            var polygon = Leaflet.polygon(mapPolygon, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.map);
             // zoom the map to the polygon
             this.map.fitBounds(polygon.getBounds());
             //this.map.setView([Number(data.map.centerLatitude), Number(data.map.centerLongitude)], data.map.zoom)
