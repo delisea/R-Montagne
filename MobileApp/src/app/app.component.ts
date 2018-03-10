@@ -15,6 +15,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
   rootPage:any = 'LoginPage';
   logged:boolean = false;
+  rootPageName: string = "";
 
   pages: Array<{title: string, component: any, param: number}>;
 
@@ -36,6 +37,7 @@ export class MyApp {
             for(var m of data.maps) {
               this.pages.push({ title: 'Map: '+m.name, component: MapPage, param: m.idMap });
             }
+            this.rootPageName = this.pages[1].title;
             this.openPage(this.pages[1]);
           });
         }
@@ -47,6 +49,7 @@ export class MyApp {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
     //console.log("move" + page.param);
+    this.rootPageName = page.title;
     this.nav.setRoot(page.component, {
       param: page.param
     });
