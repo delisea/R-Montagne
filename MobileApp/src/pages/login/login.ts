@@ -17,10 +17,11 @@ export class LoginPage {
 
   constructor(private app:App, private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private loadingCtrl: LoadingController, private toastCtrl: ToastController) { }
 
-  showToast(position: string) {
+  showToast() {
     const toast = this.toastCtrl.create({
       message: 'Login or Password incorrect',
-      position: position,
+      cssClass: 'toastlogin',
+      position: 'bottom',
       duration: 3000
     });
     toast.present();
@@ -39,7 +40,7 @@ export class LoginPage {
           //this.app.getRootNav().setRoot(MapPage);
         }
         else{
-          this.showToast("bottom");
+          this.showToast();
         }
       }, error => {
             console.log(error);
