@@ -6,28 +6,40 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/user.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$user = new User($db);
+if (isset($_POST['session'])) {
 
-if (isset($_POST['id'])) {
-	$user->id = $_POST['id'];
+    session_id($_POST['session']);
+    session_start();
 
-	if ($user->delete()) {
-	    echo json_encode(
-        	array("message" => "User was deleted.")
-    );
-	} else {
-	    echo json_encode(
-        	array("message" => "Unable to delete user.")
-    	);
-	}
+    if (isset($_SESSION['id'])) {
+
+        $id = $_SESSION['id'];
+
+        $query = 'DELETE FROM User WHERE id=:id';
+
+        $stmt = $db->prepare($query);
+        $stmt->bindParam('id', $id);
+
+        if ($stmt->execute()) {
+            echo json_encode(
+                array('success' => 1, 'message' => 'You died')
+            );
+        } else {
+            echo json_encode(
+                array('success' => 0, 'message' => 'An error has occured')
+            );
+        }
+    } else {
+        echo json_encode(
+            array('success' => 0, 'message' => 'Invalid session')
+        );
+    }
 } else {
     echo json_encode(
-        array("message" => "Unable to delete user.")
+        array('success' => 0, 'message' => 'Invalid parameters')
     );
 }
-?>

@@ -6,35 +6,50 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/user.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$user = new User($db);
+if (isset($_POST['session']) && isset($_POST['name']) && isset($_POST['firstName']) && isset($_POST['email']) && isset($_POST['phone']) && isset($_POST['address'])) {
+	
+	session_id($_POST['session']);
+	session_start();
 
-if (isset($_POST['id']) && isset($_POST['name']) && isset($_POST['firstName']) && isset($_POST['username']) && isset($_POST['email']) && isset($_POST['phone']) && isset($_POST['address'])) {
-	$user->id = $_POST['id'];
+	if (isset($_SESSION['id'])) {
 
-	$user->name = $_POST['name'];
-	$user->firstName = $_POST['firstName'];
-	$user->username = $_POST['username'];
-	$user->email = $_POST['email'];
-	$user->phone = $_POST['phone'];
-	$user->address = $_POST['address'];
+		$id = $_SESSION['id'];
+		$name = htmlspecialchars(strip_tags($_POST['name']));
+		$firstName = htmlspecialchars(strip_tags($_POST['firstName']));
+		$email = htmlspecialchars(strip_tags($_POST['email']));
+		$phone = htmlspecialchars(strip_tags($_POST['phone']));
+		$address = htmlspecialchars(strip_tags($_POST['address']));
 
-	if ($user->update()) {
-	    echo json_encode(
-        	array("message" => "User was updated.")
-    	);
+		$query = 'UPDATE User as u SET u.name=:name, u.firstName=:firstName, u.email=:email, u.phone=:phone, u.address=:address WHERE u.id=:id';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+		$stmt->bindParam('name', $name);
+		$stmt->bindParam('firstName', $firstName);
+		$stmt->bindParam('email', $email);
+		$stmt->bindParam('phone', $phone);
+		$stmt->bindParam('address', $address);
+
+		if ($stmt->execute()) {
+			echo json_encode(
+				array('success' => 1, 'message' => 'User successfully updated')
+			);
+		} else {
+			echo json_encode(
+				array('success' => 0, 'message' => 'An error has occured')
+			);
+		}
 	} else {
-	    echo json_encode(
-        	array("message" => "Unable to update user.")
-    	);
+		echo json_encode(
+			array('success' => 0, 'message' => 'Invalid session')
+		);
 	}
 } else {
     echo json_encode(
-        array("message" => "Unable to update user.")
+        array('success' => 0, 'message' => 'Invalid parameters')
     );
 }
-?>

@@ -18,7 +18,7 @@ if (isset($_POST['username'])) {
 
 		$password = htmlspecialchars(strip_tags($_POST['password']));
 
-		$query = "SELECT u.name, u.firstName, u.username, u.email, u.phone, u.address, u.rescuer FROM  User as u WHERE username=:username AND password=:password";
+		$query = "SELECT u.id, u.name, u.firstName, u.username, u.email, u.phone, u.address FROM  User as u WHERE username=:username AND password=:password";
 
 		$stmt = $db->prepare($query);
 		$stmt->bindParam('username', $username);
@@ -33,14 +33,16 @@ if (isset($_POST['username'])) {
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
 			extract($row);
 
+			$temp = array(
+				'id' => $id
+			);
 			$user = array(
 				"name" => $name,
 				"firstName" => $firstName,
 				"username" => $username,
 				"email" => $email,
 				"phone" => $phone,
-				"address" => $address,
-				"rescuer" => $rescuer
+				"address" => $address
 			);
 
 			$arr['success'] = 1;
@@ -48,20 +50,21 @@ if (isset($_POST['username'])) {
 
 			session_start();
 			$arr['session'] = session_id();
+			$_SESSION['id'] = $temp['id'];
 
 			echo json_encode($arr);
 		} else {
 			echo json_encode(
-				array('success' => 0, 'text' => 'Bad username or password')
+				array('success' => 0, 'message' => 'Bad username or password')
 			);
 		}
 	} else {
 		echo json_encode(
-			array('success' => 0, 'text' => 'No password given')
+			array('success' => 0, 'message' => 'No password given')
 		);
 	}
 } else {
 	echo json_encode(
-		array('success' => 0, 'text' => 'No username given')
+		array('success' => 0, 'message' => 'No username given')
 	);
 }

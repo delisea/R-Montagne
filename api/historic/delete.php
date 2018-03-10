@@ -6,29 +6,42 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/historic.php';
  
 $database = new Database();
 $db = $database->getConnection();
 
-$historic = new Historic($db);
+if (isset($_POST['session']) && isset($_POST['id']) && isset($_POST['date'])) {
 
-if (isset($_POST['idTracker']) && isset($_POST['date'])) {
-	$historic->idTracker = $_POST['idTracker'];
-	$historic->date = $_POST['date'];
+	session_id($_POST['session']);
+	session_start();
 
-	if ($historic->delete()) {
-		echo json_encode(
-			array("message" => "Historic entry was deleted.")
-		);
+	if (isset($_SESSION['id']) {
+
+		$id = htmlspecialchars(strip_tags($_POST['id']));
+		$date = htmlspecialchars(strip_tags($_POST['date']));
+
+		$query = 'DELETE FROM Historic WHERE idTracker=:id AND date=:date';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $id);
+		$stmt->bindParam('date', $date);
+
+		if ($stmt->execute()) {
+			echo json_encode(
+				array('success' => 1, 'message' => 'Historic entry successfully deleted')
+			);
+		} else {
+			echo json_encode(
+				array('success' => 0, 'message' => 'An error has occured')
+			);
+		}
 	} else {
 		echo json_encode(
-			array("message" => "Unable to delete historic entry")
+			array('success' => 0, 'message' => 'Invalid session')
 		);
 	}
 } else {
 	echo json_encode(
-		array("message" => "Unable to delete historic entry")
+		array('success' => 0, 'message' => 'Invalid parameters')
 	);
 }
-?>
