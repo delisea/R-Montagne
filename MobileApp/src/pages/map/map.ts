@@ -144,7 +144,7 @@ IconBlue: any;
           this.markerCurrent.addLayer(marker);
         }
         for (let e of data.beacons) {
-          var customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
+          var customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: this.IconPurple}).bindPopup(customPopup,{closeButton:false})
           this.markerBeacon.addLayer(marker);
         }
