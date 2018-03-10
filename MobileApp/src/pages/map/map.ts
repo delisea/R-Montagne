@@ -2,9 +2,6 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, NavParams, IonicPage } from 'ionic-angular';
 import Leaflet from 'leaflet';
 import { AuthService } from '../../providers/auth-service/auth-service';
-import { HttpParams, HttpClient } from '@angular/common/http/';
-import { LoginPage } from '../login/login';
-import { App } from 'ionic-angular';
 
 
 @IonicPage()
@@ -29,7 +26,7 @@ IconPurple: any;
 IconBlue: any;
 
 
-  constructor(private app:App, public nav: NavController, private auth: AuthService, public navParams: NavParams) {
+  constructor(public nav: NavController, private auth: AuthService, public navParams: NavParams) {
     //    console.log(navParams.get('param'));
     this.mapId = navParams.get('param');
   }
@@ -130,8 +127,9 @@ IconBlue: any;
         this.markerMe = Leaflet.featureGroup();
         // let marker: any = Leaflet.marker([e.latitude, e.longitude], {icon:IconGreen}).bindPopup(customPopup,{closeButton:false})
         let id  = 0
+        var customPopup;
         for (let e of data.self) {
-          var customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
+          customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (id++===0)?this.IconGreen:this.IconGrey}).bindPopup(customPopup,{closeButton:false})
           if(id == 1)
             this.markerMe.addLayer(marker);
@@ -139,12 +137,12 @@ IconBlue: any;
             this.markerHisto.addLayer(marker);
         }
         for (let e of data.others) {
-          var customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
+          customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (e.alert==="1")?this.IconRed:this.IconBlue}).bindPopup(customPopup,{closeButton:false})
           this.markerCurrent.addLayer(marker);
         }
         for (let e of data.beacons) {
-          var customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
+          customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: this.IconPurple}).bindPopup(customPopup,{closeButton:false})
           this.markerBeacon.addLayer(marker);
         }

@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import { Http, Headers } from '@angular/http';
 import { HttpParams, HttpClient } from '@angular/common/http/';
-//import { LoginPage } from '../../pages/login/login';
 import { App } from 'ionic-angular';
 import { Events } from 'ionic-angular';
 
 import 'rxjs/add/operator/map';
 
 let apiURL = 'http://closed.power-heberg.com/RMontagne/api/'
-let response: object;
 
 export class User {
   session: string;

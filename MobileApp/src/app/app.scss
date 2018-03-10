@@ -18,6 +18,27 @@
 .menu {
 	color: #dab671;
 
+  .item-md {
+    padding-left: 5px;
+  }
+
+  .item-md ion-icon[item-left] + .item-inner, .item-md ion-icon[item-left] + .item-input, .item-md ion-icon[item-start] + .item-inner, .item-md ion-icon[item-start] + .item-input {
+    margin-left: 10px;
+  }
+
+  .item-md ion-icon[item-left], .item-md ion-icon[item-right], .item-md ion-icon[item-start], .item-md ion-icon[item-end] {
+    margin-top: 9px;
+    margin-bottom: 9px;
+  }
+
+  .item-md [item-left], .item-md [item-right], .item-md [item-start], .item-md [item-end] {
+    margin: 0;
+  }
+
+  .item-md.item-block .item-inner {
+    padding: 0;
+  }
+
   .ion-md-map-custom {
     content: url("../assets/imgs/map.png") !important;
   }

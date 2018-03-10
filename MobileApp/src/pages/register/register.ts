@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
-import { HttpParams, HttpClient } from '@angular/common/http/';
+import { HttpParams } from '@angular/common/http/';
 
 
 @IonicPage()

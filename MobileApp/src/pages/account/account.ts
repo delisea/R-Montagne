@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, IonicPage } from 'ionic-angular';
+import { NavController, AlertController, IonicPage, ToastController } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
-import { HttpParams, HttpClient } from '@angular/common/http/';
-
 
 @IonicPage()
 @Component({
@@ -19,7 +17,17 @@ export class AccountPage {
   pass1: string = '';
   pass2: string = '';
 
-  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController) { }
+  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController) { }
+
+  showToast(mes) {
+    const toast = this.toastCtrl.create({
+      message: mes,
+      cssClass: 'toastaccount',
+      position: 'bottom',
+      duration: 5000
+    });
+    toast.present();
+  }
 
   ngOnInit() {
     this.credentials = this.auth.getUserInfo().logInfos;
@@ -42,10 +50,11 @@ save(){
    console.log(this.credentials);
    console.log(data);
     if(data){
-      //popup modification faite
+      this.showToast('Information saved');
     }
     else{
       this.credentials = this.backUpCreds;
+      this.showToast('Information not saved: wrong entry');
     }
   });
 }
@@ -63,21 +72,21 @@ cancelPW(){
 }
 
 savePW(){
-  this.isCP = false;
   if(this.pass1 != '' && this.pass1 === this.pass2){
+    this.isCP = false;
     this.auth.request('user/updatepwd.php', {password: this.pass1}).subscribe(data => {
      console.log(this.credentials);
      console.log(data);
       if(data){
-        //popup modification faite
+        this.showToast('New password set');
       }
       else{
-        // à raté
+        this.showToast('Server error, password not changed');
       }
     });
   }
   else{
-    //popup raté
+    this.showToast('Passwords must be the same and not null');
   }
   this.pass1 = '';
   this.pass2 = '';

@@ -10,7 +10,7 @@ page-login {
 
     .login-box {
       background: #1c531c;
-      padding: 0px 20px 0px 20px;
+      padding: 50px 20px 0px 20px;
       margin-top: 0px;
     }
 
@@ -56,11 +56,18 @@ page-login {
   font-size: 1em;
   text-shadow: 1px 1px #111111;
 }
-.toastlogin {
-  .toast-wrapper {
-    transform: translateY(-280px) !important;
-  }
-}
 }
 }
 
+.toastlogin {
+  .toast-wrapper {
+    transform: translateY(-276px) !important;
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+    text-shadow: 1px 1px #111111;
+    font-size: 1.1em !important;
+    font-weight: bold !important;
+    max-width: 100% !important;
+    toast-md-title-color: #d62d20 !important;
+  }
+}
