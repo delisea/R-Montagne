@@ -1,0 +1,1 @@
+cordova build android --release -- --keystore=../../rmontagne_android.keystore  --storePassword=pouted --alias=rmontagne --password=pouted
