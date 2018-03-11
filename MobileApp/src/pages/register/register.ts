@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { NavController, AlertController, IonicPage } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
 import { HttpParams } from '@angular/common/http/';
-
+//import { Firebase } from '@ionic-native/firebase';
+//import { AngularFireAuth } from 'angularfire2/auth';
 
 @IonicPage()
 @Component({
@@ -14,7 +15,7 @@ export class RegisterPage {
   registerCredentials = { name: '', firstName: '', email: '', phone: '', address: '', username: '', password: '' };
   isRescue = false;
 
-  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController) { }
+  constructor(/*private fire: AngularFireAuth,*/ private nav: NavController, private auth: AuthService, private alertCtrl: AlertController) { }
 
   public register() {
     /*
@@ -39,6 +40,14 @@ export class RegisterPage {
       params = params.append('username', this.registerCredentials.username);
       params = params.append('password', this.registerCredentials.password);
       params = params.append('rescuer', String(this.isRescue));
+      /*
+      this.fire.auth.createUserWithEmailAndPassword(this.registerCredentials.email, this.registerCredentials.password).then(data => {
+        console.log('grospenis', data);
+
+      }).catch(error => {
+        console.log('gotanerror', error);
+      });
+      */
       this.auth.register(params).subscribe(data => {
         if(data)
           this.nav.setRoot('LoginPage');

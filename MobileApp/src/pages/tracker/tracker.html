@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+  </ion-navbar>
+</ion-header>
+
+<ion-content class="login-content" padding>
+  <div class="login-box">
+
+    <ion-row>
+      <ion-col>
+        <ion-list inset>
+
+          <ion-item class="notro">
+            <ion-label> There are currently {{freeTrackers}} trackers without activated license</ion-label>
+          </ion-item>
+
+          <ion-row *ngIf="!isCP">
+            <ion-col class="signup-col">
+              <button *ngIf="!isMo" ion-button class="register-btn" block clear (click)="addLicenses()">Add Licenses</button>
+            </ion-col>
+          </ion-row>
+
+          <ion-item class="notro" *ngIf="isMo">
+            <ion-label>Number of Licenses</ion-label>
+            <ion-input type="number" placeholder="" name="licenses" [(ngModel)]="activation.licenses" required></ion-input>
+          </ion-item>
+
+          <ion-item class="notro" *ngIf="isMo">
+            <ion-label>Number of Days</ion-label>
+            <ion-input type="number" placeholder="" name="days" [(ngModel)]="activation.days" required></ion-input>
+          </ion-item>
+
+          <ion-item class="notro" *ngIf="isMo">
+            <ion-label *ngIf="isMo">Map</ion-label>
+            <ion-select [(ngModel)]="activation.map">
+              <ion-option *ngFor="let map of maps" value="{{map.idMap}}">{{map.name}}</ion-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-row *ngIf="isMo">
+            <ion-col class="signup-col">
+              <button ion-button class="register-btn" block clear (click)="cancelActivation()">Cancel</button>
+              <button ion-button class="register-btn" block clear (click)="addActivation()">Validate</button>
+            </ion-col>
+          </ion-row>
+
+          <ng-container *ngFor="let tr of trackers">
+            <ion-item class="ro" *ngIf="!tr.ended">
+              <ion-label>Tracker {{tr.idTracker}}</ion-label>
+              <ion-input type="text" placeholder="License {{tr.idLicense}} ends in {{tr.end}} days" name="username" required readonly></ion-input>
+            </ion-item>
+          </ng-container>
+          <ng-container *ngFor="let tr of trackers">
+            <ion-item class="notro" *ngIf="tr.ended">
+              <ion-label>Tracker {{tr.idTracker}} - No license attributed</ion-label>
+            </ion-item>
+          </ng-container>
+
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>

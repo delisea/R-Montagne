@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import { HttpParams, HttpClient } from '@angular/common/http/';
-import { App } from 'ionic-angular';
+import { App, Platform } from 'ionic-angular';
 import { Events } from 'ionic-angular';
+import { LocalNotifications } from '@ionic-native/local-notifications';
+import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database-deprecated';
 import { Storage } from '@ionic/storage';
 
 import 'rxjs/add/operator/map';
@@ -51,8 +53,28 @@ export class AuthService {
   regres: RegResponse;
   sucres: SucResponse;
 
+  constructor(public db: AngularFireDatabase, private localNotifications: LocalNotifications, private plt: Platform, public events: Events, private app:App, public httpClient: HttpClient) {
+    this.plt.ready().then((rdy) => {
+      this.localNotifications.on('click', (notification, state) => {
+        console.log(notification);
+        //let params = JSON.parse(notification.data);
+        let params = notification.data;
+        this.events.publish('alert:pop', params.map, params.id_tracker);
+      });
+    });
+  }
 
   constructor(private storage: Storage, public events: Events, private app:App, public httpClient: HttpClient) {}
+  scheduleSingleNotif(alert){
+    // Schedule a single notification
+    this.localNotifications.schedule({
+      id : 1,
+      title: 'Alert Detected',
+      text: 'One Tracker switched to alert mode',
+      icon: 'assets/imgs/logo',
+      data: { map: alert.map, id_tracker: alert.id_tracker }
+    });
+  }
 
   public login(credentials): Observable<Boolean> {
     return Observable.create(observer => {
@@ -63,6 +85,20 @@ export class AuthService {
         observer.next(this.logres.success === 1);
         if(this.logres.success === 1)
           this.storage.set('user', JSON.stringify(this.currentUser));
+        var alert=undefined;
+        this.db.object('/alerts/1').subscribe(data => {
+          Object.keys(data).forEach(function(key,index) {
+            console.log(data[key]);
+            if(alert===undefined || alert.time<data[key].time){
+              alert = data[key];
+            }
+          });
+          if(alert!==undefined){
+            console.log(alert);
+            this.scheduleSingleNotif(alert);
+          }
+        });
+
         this.events.publish('log:change', this.logres.success === 1);
         observer.complete();
       });
