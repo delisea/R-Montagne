@@ -42,7 +42,7 @@ import { TrackerPage } from '../pages/tracker/tracker';
     HttpModule,
     IonicModule.forRoot(MyApp, {}),
     HttpClientModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
     AngularFireModule.initializeApp(firebaseAuth),
     AngularFireAuthModule,
     AngularFireDatabaseModule

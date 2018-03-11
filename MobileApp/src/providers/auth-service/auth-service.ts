@@ -53,7 +53,7 @@ export class AuthService {
   regres: RegResponse;
   sucres: SucResponse;
 
-  constructor(public db: AngularFireDatabase, private localNotifications: LocalNotifications, private plt: Platform, public events: Events, private app:App, public httpClient: HttpClient) {
+  constructor(private storage: Storage, public db: AngularFireDatabase, private localNotifications: LocalNotifications, private plt: Platform, public events: Events, private app:App, public httpClient: HttpClient) {
     this.plt.ready().then((rdy) => {
       this.localNotifications.on('click', (notification, state) => {
         console.log(notification);
@@ -64,7 +64,6 @@ export class AuthService {
     });
   }
 
-  constructor(private storage: Storage, public events: Events, private app:App, public httpClient: HttpClient) {}
   scheduleSingleNotif(alert){
     // Schedule a single notification
     this.localNotifications.schedule({

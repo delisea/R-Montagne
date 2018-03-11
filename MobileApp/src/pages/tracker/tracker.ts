@@ -19,13 +19,13 @@ export class TrackerPage {
   freeTrackers = 0;
 
   constructor(private nav: NavController, private auth: AuthService, public events: Events,  private toastCtrl: ToastController) {
-    this.auth.request("watch/read.php", {}).subscribe(data => {
+    this.auth.request("watch/read.php", {}).then(data => {
       if(data !== null) {
         this.maps = data.maps;
       }
     });
 
-    this.auth.request('tracker/read.php', {}).subscribe(data => {
+    this.auth.request('tracker/read.php', {}).then(data => {
       if(data !== null){
         this.trackers = data.trackers;
         for(let t of this.trackers){
@@ -58,7 +58,7 @@ export class TrackerPage {
   addActivation(){
     this.isMo = false;
     if(this.activation.days>0){
-      this.auth.request('licenseTemp/post.php', {licenses: this.activation.licenses, map: this.activation.map, days: this.activation.days}).subscribe(data => {
+      this.auth.request('licenseTemp/post.php', {licenses: this.activation.licenses, map: this.activation.map, days: this.activation.days}).then(data => {
         if(data.success){
           this.showToast(this.activation.licenses+' Trackers Activated');
           this.freeTrackers = this.freeTrackers - this.activation.licenses;

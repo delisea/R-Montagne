@@ -17,7 +17,7 @@ export class LoginPage {
   loading: Loading;
   registerCredentials = { username: '', password: '' };
 
-  constructor( private alertCtrl: AlertController,/* private fire: AngularFireAuth,*/ private nav: NavController, private auth: AuthService, private loadingCtrl: LoadingController, private toastCtrl: ToastController, private firebase: Firebase) {}
+  constructor( private alertCtrl: AlertController,/* private fire: AngularFireAuth,*/ private nav: NavController, private auth: AuthService, private loadingCtrl: LoadingController, private toastCtrl: ToastController, private firebase: Firebase) {
     this.auth.relog();
   }
 
