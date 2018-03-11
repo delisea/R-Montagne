@@ -3,6 +3,7 @@ import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MapPage } from '../pages/map/map';
+import { MapAdminPage } from '../pages/mapAdmin/mapAdmin';
 import { AccountPage } from '../pages/account/account';
 import { Events } from 'ionic-angular';
 import { AuthService } from '../providers/auth-service/auth-service';
@@ -22,7 +23,8 @@ export class MyApp {
   constructor(private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0}
+      { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
+      { title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
     ];
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -37,8 +39,8 @@ export class MyApp {
             for(var m of data.maps) {
               this.pages.push({ title: /*'Map: '+*/m.name, icon: 'map-custom', component: MapPage, param: m.idMap });
             }
-            this.rootPageName = this.pages[1].title;
-            this.openPage(this.pages[1]);
+            this.rootPageName = this.pages[2].title;
+            this.openPage(this.pages[2]);
           });
         }
       });

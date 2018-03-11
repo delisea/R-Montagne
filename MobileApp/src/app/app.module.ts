@@ -10,12 +10,14 @@ import { HttpClientModule } from '@angular/common/http/';
 
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
+import { MapAdminPage } from '../pages/mapAdmin/mapAdmin';
 import { AccountPage } from '../pages/account/account';
 
 @NgModule({
   declarations: [
     MyApp,
     MapPage,
+    MapAdminPage,
     AccountPage,
   ],
   imports: [
@@ -28,6 +30,7 @@ import { AccountPage } from '../pages/account/account';
   entryComponents: [
     MyApp,
     MapPage,
+    MapAdminPage,
     AccountPage,
   ],
   providers: [

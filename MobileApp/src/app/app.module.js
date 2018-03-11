@@ -15,6 +15,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http/';
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
+import { MapAminPage } from '../pages/mapAdmin/mapAdmin';
 import { AccountPage } from '../pages/account/account';
 var AppModule = /** @class */ (function () {
     function AppModule() {
@@ -25,6 +26,7 @@ var AppModule = /** @class */ (function () {
                 MyApp,
                 MapPage,
                 AccountPage,
+                MapAdminPage,
             ],
             imports: [
                 BrowserModule,
@@ -37,6 +39,7 @@ var AppModule = /** @class */ (function () {
                 MyApp,
                 MapPage,
                 AccountPage,
+                MapAdminPage,
             ],
             providers: [
                 StatusBar,
