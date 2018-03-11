@@ -17,6 +17,7 @@ import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
 import { MapAdminPage } from '../pages/mapAdmin/mapAdmin';
 import { AccountPage } from '../pages/account/account';
+import { TrackerPage } from '../pages/tracker/tracker';
 
   const firebaseAuth = {
     apiKey: "AIzaSyAy9HnosQMjkVvv-__6xvhW2L6RV0ZbQnc",
@@ -32,7 +33,8 @@ import { AccountPage } from '../pages/account/account';
     MyApp,
     MapPage,
     MapAdminPage,
-    AccountPage
+    AccountPage,
+    TrackerPage
   ],
   imports: [
     BrowserModule,
@@ -49,6 +51,7 @@ import { AccountPage } from '../pages/account/account';
     MapPage,
     MapAdminPage,
     AccountPage,
+    TrackerPage
   ],
   providers: [
     StatusBar,

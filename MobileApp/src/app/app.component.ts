@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { MapPage } from '../pages/map/map';
 import { MapAdminPage } from '../pages/mapAdmin/mapAdmin';
 import { AccountPage } from '../pages/account/account';
+import { TrackerPage } from '../pages/tracker/tracker';
 import { Events } from 'ionic-angular';
 import { AuthService } from '../providers/auth-service/auth-service';
 
@@ -25,6 +26,7 @@ export class MyApp {
     this.pages = [
       { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
       { title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
+      { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2}
     ];
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -39,15 +41,19 @@ export class MyApp {
             for(var m of data.maps) {
               this.pages.push({ title: /*'Map: '+*/m.name, icon: 'map-custom', component: MapPage, param: m.idMap });
             }
-            this.rootPageName = this.pages[2].title;
-            this.openPage(this.pages[2]);
+            this.rootPageName = this.pages[3].title;
+            this.openPage(this.pages[3]);
             //this.openMap(1,1);
           });
         }
       });
-      events.subscribe('alert:pop', (map, target) => {      
-        this.rootPageName = this.pages[2].title;
+      events.subscribe('alert:pop', (map, target) => {
+        this.rootPageName = this.pages[3].title;
         this.openMap(map, target);
+      });
+      events.subscribe('page:change',(page) => {
+        this.rootPageName = this.pages[page].title;
+        this.openPage(this.pages[page]);
       });
     });
   }
@@ -63,8 +69,8 @@ export class MyApp {
   }
 
   openMap(map, target) {
-    this.rootPageName = this.pages[2].title;
-    this.nav.setRoot(this.pages[2].component, {
+    this.rootPageName = this.pages[3].title;
+    this.nav.setRoot(this.pages[3].component, {
       param: map,
       add: target
     });

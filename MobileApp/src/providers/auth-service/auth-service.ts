@@ -52,32 +52,26 @@ export class AuthService {
   regres: RegResponse;
   sucres: SucResponse;
 
-  map;
-  id_tracker;
-  timestamp;
-
-
-  notifAlert = {
-    id: 1,
-    title: 'Alert Detected',
-    text: 'One Tracker switched to alert mode',
-    icon: 'assets/imgs/logo',
-    data: { id_tracker: this.id_tracker, map: this.map, timestamp: this.timestamp }
-  };
-
   constructor(public db: AngularFireDatabase, private localNotifications: LocalNotifications, private plt: Platform, public events: Events, private app:App, public httpClient: HttpClient) {
     this.plt.ready().then((rdy) => {
       this.localNotifications.on('click', (notification, state) => {
         console.log(notification);
-        let params = JSON.parse(notification.data);
-        this.events.publish('', 'alert:pop', params.id_tracker, params.map, params.timestamp);
+        //let params = JSON.parse(notification.data);
+        let params = notification.data;
+        this.events.publish('alert:pop', params.map, params.id_tracker);
       });
     });
   }
 
-  scheduleSingleNotif(){
+  scheduleSingleNotif(alert){
     // Schedule a single notification
-    this.localNotifications.schedule(this.notifAlert);
+    this.localNotifications.schedule({
+      id : 1,
+      title: 'Alert Detected',
+      text: 'One Tracker switched to alert mode',
+      icon: 'assets/imgs/logo',
+      data: { map: alert.map, id_tracker: alert.id_tracker }
+    });
   }
 
   public login(credentials): Observable<Boolean> {
@@ -97,7 +91,7 @@ export class AuthService {
           });
           if(alert!==undefined){
             console.log(alert);
-            this.scheduleSingleNotif();
+            this.scheduleSingleNotif(alert);
           }
         });
 

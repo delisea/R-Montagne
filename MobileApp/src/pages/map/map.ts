@@ -74,31 +74,31 @@ IconBlue: any;
     }).addTo(this.map);
 
     this.IconGreen = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_green.png",
+      iconUrl: "assets/imgs/pointer_green.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconRed = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_red.png",
+      iconUrl: "assets/imgs/pointer_red.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconGrey = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_grey.png",
+      iconUrl: "assets/imgs/pointer_grey.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconPurple = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_purple.png",
+      iconUrl: "assets/imgs/pointer_purple.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconBlue = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_blue.png",
+      iconUrl: "assets/imgs/pointer_blue.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
