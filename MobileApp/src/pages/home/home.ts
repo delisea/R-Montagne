@@ -17,7 +17,7 @@ export class HomePage {
   }
 
   public logout() {
-    this.auth.logout().subscribe(succ => {
+    this.auth.logout().then(succ => {
       this.nav.setRoot('LoginPage')
     });
   }

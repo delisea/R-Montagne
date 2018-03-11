@@ -3,6 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import { HttpParams, HttpClient } from '@angular/common/http/';
 import { App } from 'ionic-angular';
 import { Events } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 
 import 'rxjs/add/operator/map';
 
@@ -51,7 +52,7 @@ export class AuthService {
   sucres: SucResponse;
 
 
-  constructor(public events: Events, private app:App, public httpClient: HttpClient) {}
+  constructor(private storage: Storage, public events: Events, private app:App, public httpClient: HttpClient) {}
 
   public login(credentials): Observable<Boolean> {
     return Observable.create(observer => {
@@ -60,10 +61,18 @@ export class AuthService {
         this.currentUser = new User(this.logres.session, this.logres.user);
         console.log(this.currentUser);
         observer.next(this.logres.success === 1);
+        if(this.logres.success === 1)
+          this.storage.set('user', JSON.stringify(this.currentUser));
         this.events.publish('log:change', this.logres.success === 1);
         observer.complete();
       });
     });
+  }
+
+  public async relog() {
+    if((await this.getUserInfo()) === undefined)
+      return;
+    this.events.publish('log:change', 1);
   }
 
 
@@ -77,26 +86,29 @@ export class AuthService {
     });
   }
 
-  public getUserInfo() : User {
+  public async getUserInfo() : Promise<User> {
+    if(this.currentUser === undefined) {
+      this.currentUser = JSON.parse(await this.storage.get('user'));
+    }
     return this.currentUser;
   }
 
-  public request(url, params) {
-    if(this.getUserInfo() === undefined) {
+  public async request(url, params): Promise<any> {
+    if((await this.getUserInfo()) === undefined) {
       this.logout();
       return Observable.create(observer => {})
     }
 
     let HTTPparams = new HttpParams();
     Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
-    HTTPparams = HTTPparams.append('session', this.getUserInfo().session);
-    return this.httpClient.post<any>(apiURL+url, HTTPparams/*JSON.stringify(credentials)*/);
+    HTTPparams = HTTPparams.append('session', (await this.getUserInfo()).session);
+    return await this.httpClient.post<any>(apiURL+url, HTTPparams/*JSON.stringify(credentials)*/).toPromise();
   }
 
-  public logout() {
+  public async logout() {
     if(this.getUserInfo()) {
       let params = new HttpParams();
-      params = params.append('session', this.getUserInfo().session);
+      params = params.append('session', (await this.getUserInfo()).session);
       return Observable.create(observer => {
         this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
           this.sucres = data;

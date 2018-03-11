@@ -13,7 +13,9 @@ export class LoginPage {
   loading: Loading;
   registerCredentials = { username: '', password: '' };
 
-  constructor(private nav: NavController, private auth: AuthService, private loadingCtrl: LoadingController, private toastCtrl: ToastController) { }
+  constructor(private nav: NavController, private auth: AuthService, private loadingCtrl: LoadingController, private toastCtrl: ToastController) {
+    this.auth.relog();
+  }
 
   showToast() {
     const toast = this.toastCtrl.create({

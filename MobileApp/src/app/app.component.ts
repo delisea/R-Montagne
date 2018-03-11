@@ -34,11 +34,11 @@ export class MyApp {
       events.subscribe('log:change', (state) => {
         this.logged = state;
         if(this.logged) {
-          this.auth.request("watch/read.php", {}).subscribe(data => {
+          this.auth.request("watch/read.php", {}).then(data => {
             //console.log(data);
             for(var m of data.maps) {
               this.pages.push({ title: /*'Map: '+*/m.name, icon: 'map-custom', component: MapPage, param: m.idMap });
-            }
+            }console.log("open");
             this.rootPageName = this.pages[2].title;
             this.openPage(this.pages[2]);
             //this.openMap(1,1);

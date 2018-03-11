@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http/';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map/map';
@@ -24,7 +25,8 @@ import { AccountPage } from '../pages/account/account';
     BrowserModule,
     HttpModule,
     IonicModule.forRoot(MyApp, {}),
-    HttpClientModule
+    HttpClientModule,
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [

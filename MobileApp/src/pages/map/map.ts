@@ -120,7 +120,7 @@ IconBlue: any;
     })*/
 
 
-    this.auth.request("generic/getInfo.php", {map : this.mapId}).subscribe(data => {
+    this.auth.request("generic/getInfo.php", {map : this.mapId}).then(data => {
       console.log(data);
         //let markerGroup = Leaflet.featureGroup();
         this.markerBeacon = Leaflet.featureGroup();
@@ -165,7 +165,7 @@ IconBlue: any;
         //console.log(data);
         //this.nav.setRoot('MenuPage');
         //if(data.self[0] != undefined) {
-          this.auth.request("map/get.php", {map : this.mapId/*data.self[0].map*/}).subscribe(data => {
+          this.auth.request("map/get.php", {map : this.mapId/*data.self[0].map*/}).then(data => {
             var mapPolygon = [];
             for(var point of data.map.polygon)
               mapPolygon.push([point.longitude, point.latitude]);

@@ -30,7 +30,8 @@ export class AccountPage {
   }
 
   ngOnInit() {
-    this.credentials = this.auth.getUserInfo().logInfos;
+    this.credentials = {}
+    this.auth.getUserInfo().then((user) => {this.credentials = user.logInfos});
     this.backUpCreds = this.credentials;
     console.log(this.credentials);
   }
@@ -46,7 +47,7 @@ export class AccountPage {
 
 save(){
   this.isRO = true;
-  this.auth.request('user/update.php', {name: this.credentials.name, firstName: this.credentials.firstName, email: this.credentials.email, phone: this.credentials.phone, address: this.credentials.address}).subscribe(data => {
+  this.auth.request('user/update.php', {name: this.credentials.name, firstName: this.credentials.firstName, email: this.credentials.email, phone: this.credentials.phone, address: this.credentials.address}).then(data => {
    console.log(this.credentials);
    console.log(data);
     if(data){
@@ -74,7 +75,7 @@ cancelPW(){
 savePW(){
   if(this.pass1 != '' && this.pass1 === this.pass2){
     this.isCP = false;
-    this.auth.request('user/updatepwd.php', {password: this.pass1}).subscribe(data => {
+    this.auth.request('user/updatepwd.php', {password: this.pass1}).then(data => {
      console.log(this.credentials);
      console.log(data);
       if(data){
