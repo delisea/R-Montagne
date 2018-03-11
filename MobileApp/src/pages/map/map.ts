@@ -13,6 +13,7 @@ export class MapPage {
   @ViewChild('map') mapContainer: ElementRef;
   map: any;
   mapId: number;
+  target;
   selectedFilter: string = "All";
   markerBeacon;
   markerCurrent;
@@ -29,6 +30,7 @@ IconBlue: any;
   constructor(public nav: NavController, private auth: AuthService, public navParams: NavParams) {
     //    console.log(navParams.get('param'));
     this.mapId = navParams.get('param');
+    this.target = navParams.get('add');
   }
 
   ionViewDidEnter() {
@@ -127,6 +129,7 @@ IconBlue: any;
         this.markerMe = Leaflet.featureGroup();
         // let marker: any = Leaflet.marker([e.latitude, e.longitude], {icon:IconGreen}).bindPopup(customPopup,{closeButton:false})
         let id  = 0
+        let targetTrack = undefined;
         var customPopup;
         for (let e of data.self) {
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
@@ -140,6 +143,8 @@ IconBlue: any;
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (e.alert==="1")?this.IconRed:this.IconBlue}).bindPopup(customPopup,{closeButton:false})
           this.markerCurrent.addLayer(marker);
+          if(this.target == e.idTracker)
+            targetTrack = marker;
         }
         for (let e of data.beacons) {
           customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
@@ -167,6 +172,9 @@ IconBlue: any;
             var polygon = Leaflet.polygon(mapPolygon, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.map);
             // zoom the map to the polygon
             this.map.fitBounds(polygon.getBounds());
+            if(targetTrack) {
+              this.map.flyTo(targetTrack.getLatLng(), this.map.getZoom() + 2)
+            }
             //this.map.setView([Number(data.map.centerLatitude), Number(data.map.centerLongitude)], data.map.zoom)
           });
         //}
