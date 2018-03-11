@@ -41,8 +41,13 @@ export class MyApp {
             }
             this.rootPageName = this.pages[2].title;
             this.openPage(this.pages[2]);
+            //this.openMap(1,1);
           });
         }
+      });
+      events.subscribe('alert:pop', (map, target) => {      
+        this.rootPageName = this.pages[2].title;
+        this.openMap(map, target);
       });
     });
   }
@@ -54,6 +59,14 @@ export class MyApp {
     this.rootPageName = page.title;
     this.nav.setRoot(page.component, {
       param: page.param
+    });
+  }
+
+  openMap(map, target) {
+    this.rootPageName = this.pages[2].title;
+    this.nav.setRoot(this.pages[2].component, {
+      param: map,
+      add: target
     });
   }
 
