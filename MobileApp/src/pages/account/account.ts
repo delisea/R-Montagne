@@ -121,9 +121,11 @@ activateLicense(){
         }
         this.licenseCurrent= data[0].idLicense;
       });
+      this.license = null;
     }
     else{
       this.showToast(data.message);
+      this.license = null;
     }
   })
 }
