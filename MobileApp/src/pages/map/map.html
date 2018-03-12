@@ -18,8 +18,8 @@
       <ion-segment-button value="All">
         All
       </ion-segment-button>
-      <ion-segment-button value="Me">
-        Me
+      <ion-segment-button value="{{(this.rescuer==0)?'Me':'Alerts'}}">
+        {{(this.rescuer==0)?"Me":"Alerts"}}
       </ion-segment-button>
       <ion-segment-button value="Current">
         Current
