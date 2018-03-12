@@ -37,7 +37,7 @@ export class MyApp {
         this.logged = state;
         if(this.logged) {
           this.auth.request("watch/read.php", {}).then(data => {
-            //console.log(data);
+            console.log(data);
             for(var m of data.maps) {
               this.pages.push({ title: /*'Map: '+*/m.name, icon: 'map-custom', component: MapPage, param: m.idMap });
             }
@@ -45,6 +45,15 @@ export class MyApp {
             this.openPage(this.pages[3]);
             //this.openMap(1,1);
           });
+        }
+        else {
+          this.pages = [
+            { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
+            { title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
+            { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2}
+          ];
+          this.rootPageName = "";
+          this.nav.setRoot('LoginPage', {});
         }
       });
       events.subscribe('alert:pop', (map, target) => {

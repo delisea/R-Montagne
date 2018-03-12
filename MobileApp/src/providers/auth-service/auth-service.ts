@@ -105,7 +105,7 @@ export class AuthService {
   }
 
   public async relog() {
-    if((await this.getUserInfo()) === undefined)
+    if((await this.getUserInfo()) === null)
       return;
     this.events.publish('log:change', 1);
   }
@@ -129,7 +129,7 @@ export class AuthService {
   }
 
   public async request(url, params): Promise<any> {
-    if((await this.getUserInfo()) === undefined) {
+    if((await this.getUserInfo()) === null) {
       this.logout();
       return Observable.create(observer => {})
     }
@@ -137,23 +137,31 @@ export class AuthService {
     let HTTPparams = new HttpParams();
     Object.keys(params).forEach(key => HTTPparams = HTTPparams.append(key, params[key]));
     HTTPparams = HTTPparams.append('session', (await this.getUserInfo()).session);
-    return await this.httpClient.post<any>(apiURL+url, HTTPparams/*JSON.stringify(credentials)*/).toPromise();
+    return await this.httpClient.post<any>(apiURL+url, HTTPparams/*JSON.stringify(credentials)*/).toPromise().then(async (data) => {
+      if(!(data.success === undefined) && data.success == 0 && !(data.message === undefined) && data.message === "Invalid session") {
+        await this.storage.remove('user');console.log("x");console.log(this.currentUser);
+        this.currentUser = undefined;
+        this.events.publish('log:change', false);
+      }
+      return Promise.resolve(data);
+    });
   }
 
   public async logout() {
-    if(this.getUserInfo()) {
+    if(!(await this.getUserInfo() === null)) {
       let params = new HttpParams();
       params = params.append('session', (await this.getUserInfo()).session);
-      return Observable.create(observer => {
+      return Observable.create(async observer => {
+        await this.storage.remove('user');
+        this.currentUser = undefined;
         this.httpClient.post<SucResponse>(apiURL+'user/logout.php', params).subscribe(data => {
           this.sucres = data;
-          observer.next(this.sucres.success === 1);
+          observer.next(1);
           observer.complete();
         });
       }).subscribe(data => {
         if(data) {
           this.events.publish('log:change', false);
-          this.app.getRootNav().setRoot('LoginPage');
         }
       });
     }
