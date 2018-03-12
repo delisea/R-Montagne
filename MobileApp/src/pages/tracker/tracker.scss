@@ -1,4 +1,5 @@
 page-tracker {
+
   .login-content {
     background: #1c531c;
 
@@ -31,6 +32,31 @@ page-tracker {
         color: #000000;
      }
 
+     ion-item.rot {
+        background: #AAAAAA;
+        border-radius: 15px !important;
+        padding-left: 30px !important;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        border: 1px solid #AAAAAA;
+        border-bottom: 0px !important;
+        box-shadow: none !important;
+        font-weight: bold;
+        color: #000000;
+     }
+
+     ion-item.status {
+        background: sapin;
+        border-radius: 15px !important;
+        padding-left: 30px !important;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        border: 1px solid sapin;
+        border-bottom: 0px !important;
+        box-shadow: none !important;
+        color: #000000;
+     }
+
      ion-item.notro {
         background: #EEEEEE;
         border-radius: 15px !important;
@@ -41,16 +67,6 @@ page-tracker {
         border-bottom: 0px !important;
         box-shadow: none !important;
         font-weight: normal;
-     }
-
-      .item-inner.ro {
-        border-bottom-color: #AAAAAA !important;
-        box-shadow: none !important;
-     }
-
-      .item-inner.notro {
-        border-bottom-color: #DDDDDD !important;
-        box-shadow: none !important;
      }
 
      .signup-col {
@@ -76,6 +92,10 @@ page-tracker {
      }
   }
 
+  .item-inner{
+          border-bottom-color: transparent !important;
+        box-shadow: none !important;
+  }
   .item-md.item-input.ng-valid.item-input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner, .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner {
     border-bottom-color: rgba(0,0,0,0);
     box-shadow: none;
@@ -84,6 +104,20 @@ page-tracker {
   .item-md.item-input.item-input-has-focus .item-inner, .item-md.item-input.input-has-focus .item-inner {
     border-bottom-color: rgba(0,0,0,0);
     box-shadow: none;
+  }
+
+  ion-input {
+    &.custom-placeholder {
+      ::placeholder {
+        color: #000000;
+      }
+    }
+  }
+
+  ion-label {
+    &.custom-label {
+      color: #000000;
+    }
   }
 }
 

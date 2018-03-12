@@ -56,11 +56,43 @@
             <ion-label fixed>Address</ion-label>
             <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required [readonly]="isReadonly()"></ion-input>
           </ion-item>
+          <ion-item class="ro" *ngIf="licenseactive">
+            <ion-label fixed>License</ion-label>
+            <ion-input type="text" class="custom-placeholder" placeholder="{{licenseCurrent}} is active until {{licenseEndDate * 1000 | date}}" name="licensed" required readonly></ion-input>
+          </ion-item>
+          <ion-item class="ro" *ngIf="!licenseactive && licenseCurrent!==null">
+            <ion-label fixed>License</ion-label>
+            <ion-input type="text" placeholder="{{licenseCurrent}} is inactive" name="licensed" required readonly></ion-input>
+          </ion-item>
         </ion-list>
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="!isCP">
+    <ion-row *ngIf="!isAL && !isCP && isRO">
+      <ion-col class="signup-col">
+        <button ion-button class="register-btn" block clear (click)="addLicense()">Add License</button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="isAL">
+      <ion-col>
+        <ion-list inset>
+          <ion-item class="ro">
+            <ion-label fixed>License</ion-label>
+            <ion-input type="text" placeholder="License Number" name="license" [(ngModel)]="license" required></ion-input>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="isAL">
+      <ion-col class="signup-col">
+        <button ion-button class="register-btn" block clear (click)="cancelLicense()">Cancel License</button>
+        <button ion-button class="register-btn" block clear (click)="activateLicense()">Activate License</button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!isCP && !isAL">
       <ion-col class="signup-col">
         <button ion-button *ngIf="isRO" class="register-btn" block clear (click)="modify()">Change Information</button>
         <button ion-button *ngIf="!isRO" class="register-btn" block clear (click)="cancel()">Cancel</button>
@@ -70,16 +102,16 @@
     <ion-row *ngIf="isCP">
       <ion-col>
         <ion-list inset>
-          <ion-item class="notro" *ngIf="isCP">
+          <ion-item class="notro">
             <ion-input type="password" placeholder="New Password" name="pass1" [(ngModel)]="pass1" required></ion-input>
           </ion-item>
-          <ion-item class="notro" *ngIf="isCP">
+          <ion-item class="notro">
             <ion-input type="password" placeholder="Repeat Password" name="pass2" [(ngModel)]="pass2" required></ion-input>
           </ion-item>
         </ion-list>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="isRO">
+    <ion-row *ngIf="isRO && !isAL">
       <ion-col class="signup-col">
         <button ion-button *ngIf="!isCP" class="register-btn" block clear (click)="changePassword()">Change Password</button>
         <button ion-button *ngIf="isCP" class="register-btn" block clear (click)="cancelPW()">Cancel</button>

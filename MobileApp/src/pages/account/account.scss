@@ -43,18 +43,18 @@ page-account {
      }
 
       .item-inner.ro {
-        border-bottom-color: #AAAAAA !important;
+        border-bottom-color: #DDDDDD !important;
         box-shadow: none !important;
      }
 
       .item-inner.notro {
-        border-bottom-color: #DDDDDD !important;
+        border-bottom-color: #EEEEEE !important;
         box-shadow: none !important;
      }
 
      .signup-col {
        margin: 0px 16px 0px 16px;
-       padding-bottom: 20px;
+       padding-bottom: 0px;
      }
 
      .submit-btn {
@@ -68,11 +68,21 @@ page-account {
      }
 
      .register-btn {
-      margin-top: 10px;
+      margin-top: 0px;
        color: #dab671;
        font-size: 1em;
        text-shadow: 1px 1px #111111;
      }
+
+    ion-input {
+      &.custom-placeholder {
+        ::placeholder {
+          color: #000000;
+          font-weight: bold;
+        }
+      }
+    }
+
   }
 
   .item-md.item-input.ng-valid.item-input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner, .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner {

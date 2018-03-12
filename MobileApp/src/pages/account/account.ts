@@ -14,10 +14,23 @@ export class AccountPage {
   isRescue = false;
   isRO = true;
   isCP = false;
+  isAL = false;
   pass1: string = '';
   pass2: string = '';
+  licenseCurrent: null;
+  licenseEndDate;
+  licenseactive = false;
+  license: null;
 
-  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController) { }
+  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController) {
+    this.auth.request('licenseTemp/get.php', {}).then(data => {
+      if(data[0].endDate>Math.floor(Date.now() / 1000)){
+        this.licenseEndDate= data[0].endDate;
+        this.licenseactive = true;
+      }
+      this.licenseCurrent= data[0].idLicense;
+    });
+  }
 
   showToast(mes) {
     const toast = this.toastCtrl.create({
@@ -33,7 +46,6 @@ export class AccountPage {
     this.credentials = {}
     this.auth.getUserInfo().then((user) => {this.credentials = user.logInfos});
     this.backUpCreds = this.credentials;
-    console.log(this.credentials);
   }
 
   modify(){
@@ -48,8 +60,6 @@ export class AccountPage {
 save(){
   this.isRO = true;
   this.auth.request('user/update.php', {name: this.credentials.name, firstName: this.credentials.firstName, email: this.credentials.email, phone: this.credentials.phone, address: this.credentials.address}).then(data => {
-   console.log(this.credentials);
-   console.log(data);
     if(data){
       this.showToast('Information saved');
     }
@@ -76,8 +86,6 @@ savePW(){
   if(this.pass1 != '' && this.pass1 === this.pass2){
     this.isCP = false;
     this.auth.request('user/updatepwd.php', {password: this.pass1}).then(data => {
-     console.log(this.credentials);
-     console.log(data);
       if(data){
         this.showToast('New password set');
       }
@@ -91,6 +99,33 @@ savePW(){
   }
   this.pass1 = '';
   this.pass2 = '';
+}
+
+addLicense(){
+  this.isAL = true;
+}
+
+cancelLicense(){
+  this.isAL = false;
+}
+
+activateLicense(){
+  this.isAL = false;
+  this.auth.request('licenseTemp/update.php', {license: this.license}).then(data => {
+    if(data.success){
+      this.showToast('License '+this.license+' activated');
+      this.auth.request('licenseTemp/get.php', {}).then(data => {
+        if(data[0].endDate>Math.floor(Date.now() / 1000)){
+          this.licenseEndDate= data[0].endDate;
+          this.licenseactive = true;
+        }
+        this.licenseCurrent= data[0].idLicense;
+      });
+    }
+    else{
+      this.showToast(data.message);
+    }
+  })
 }
 
   showPopup(title, text) {
