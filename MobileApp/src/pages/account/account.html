@@ -60,9 +60,13 @@
             <ion-label fixed>License</ion-label>
             <ion-input type="text" class="custom-placeholder" placeholder="{{licenseCurrent}} is active until {{licenseEndDate * 1000 | date}}" name="licensed" required readonly></ion-input>
           </ion-item>
-          <ion-item class="ro" *ngIf="!licenseactive && licenseCurrent!==null">
+          <ion-item class="ro" *ngIf="!licenseactive && !licenseIsEmpty && licenseCurrent!==null">
             <ion-label fixed>License</ion-label>
             <ion-input type="text" placeholder="{{licenseCurrent}} is inactive" name="licensed" required readonly></ion-input>
+          </ion-item>
+          <ion-item class="ro" *ngIf="licenseIsEmpty">
+            <ion-label fixed>License</ion-label>
+            <ion-input type="text" placeholder="No license detected" name="licensed" required readonly></ion-input>
           </ion-item>
         </ion-list>
       </ion-col>

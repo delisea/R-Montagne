@@ -20,15 +20,23 @@ export class AccountPage {
   licenseCurrent: null;
   licenseEndDate;
   licenseactive = false;
+  licenseIsEmpty = true;
   license: null;
 
   constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController) {
     this.auth.request('licenseTemp/get.php', {}).then(data => {
-      if(data[0].endDate>Math.floor(Date.now() / 1000)){
-        this.licenseEndDate= data[0].endDate;
-        this.licenseactive = true;
+      if(!(data[0]===undefined)){
+        if(data[0].endDate>Math.floor(Date.now() / 1000)){
+          this.licenseEndDate= data[0].endDate;
+          this.licenseactive = true;
+        }
+        else{
+          this.licenseCurrent= data[0].idLicense;
+        }
+        this.licenseIsEmpty = false;
       }
-      this.licenseCurrent= data[0].idLicense;
+      else
+        this.licenseIsEmpty = true;
     });
   }
 
@@ -120,6 +128,7 @@ activateLicense(){
           this.licenseactive = true;
         }
         this.licenseCurrent= data[0].idLicense;
+        this.licenseIsEmpty = false;
       });
       this.license = null;
     }
