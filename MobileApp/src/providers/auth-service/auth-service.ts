@@ -29,6 +29,7 @@ export interface UserInfos{
   phone: string;
   address: string;
   rescuer: number;
+  admin: number;
 }
 
 export interface LogResponse{

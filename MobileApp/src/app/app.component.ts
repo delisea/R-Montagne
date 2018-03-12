@@ -25,7 +25,7 @@ export class MyApp {
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
-      { title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
+      //{ title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
       { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2}
     ];
     platform.ready().then(() => {
@@ -36,20 +36,20 @@ export class MyApp {
       events.subscribe('log:change', (state) => {
         this.logged = state;
         if(this.logged) {
-          this.auth.request("watch/read.php", {}).then(data => {
+          this.auth.request("watch/read.php", {}).then(async data => {
             console.log(data);
             for(var m of data.maps) {
-              this.pages.push({ title: /*'Map: '+*/m.name, icon: 'map-custom', component: MapPage, param: m.idMap });
+              this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin == 1)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin == 1)?MapAdminPage:MapPage, param: m.idMap });
             }
-            this.rootPageName = this.pages[3].title;
-            this.openPage(this.pages[3]);
+            this.rootPageName = this.pages[2].title;
+            this.openPage(this.pages[2]);
             //this.openMap(1,1);
           });
         }
         else {
           this.pages = [
             { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
-            { title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
+            //{ title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
             { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2}
           ];
           this.rootPageName = "";
@@ -57,7 +57,7 @@ export class MyApp {
         }
       });
       events.subscribe('alert:pop', (map, target) => {
-        this.rootPageName = this.pages[3].title;
+        this.rootPageName = this.pages[2].title;
         this.openMap(map, target);
       });
       events.subscribe('page:change',(page) => {
@@ -78,8 +78,8 @@ export class MyApp {
   }
 
   openMap(map, target) {
-    this.rootPageName = this.pages[3].title;
-    this.nav.setRoot(this.pages[3].component, {
+    this.rootPageName = this.pages[2].title;
+    this.nav.setRoot(this.pages[2].component, {
       param: map,
       add: target
     });
