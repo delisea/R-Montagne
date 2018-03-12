@@ -97,8 +97,8 @@ export class AuthService {
             this.scheduleSingleNotif(alert);
           }
         });
-
-        this.events.publish('log:change', this.logres.success === 1);
+        if(this.logres.success === 1)
+          this.events.publish('log:change', this.logres.success === 1);
         observer.complete();
       });
     });
