@@ -38,7 +38,7 @@ IconBlue: any;
   ionViewDidEnter() {
     this.initmap();
     this.auth.getUserInfo().then(data => {
-      this.rescuer = data.logInfos.rescuer;console.log(this.rescuer);
+      this.rescuer = data.logInfos.rescuer;
       this.loadmap();
     })
   }
@@ -61,7 +61,7 @@ IconBlue: any;
         this.map.removeLayer(this.markerCurrent);
         this.map.addLayer(this.markerHisto);
         break;
-      case "Alerts":console.log("eee")
+      case "Alerts":
         this.map.removeLayer(this.markerCurrent);
         this.map.addLayer(this.markerHisto);
         break;
@@ -143,7 +143,7 @@ IconBlue: any;
         for (let e of data.self) {
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude;
           let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/((!this.rescuer))?{icon: (id++===0)?this.IconGreen:this.IconGrey}:{icon: this.IconRed}).bindPopup(customPopup,{closeButton:false})
-          if(e.date == data.last)
+          if(id == 1)
             this.markerMe.addLayer(marker);
           else
             this.markerHisto.addLayer(marker);

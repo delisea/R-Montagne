@@ -43,6 +43,7 @@ export class MapAdminPage {
 
   ionViewDidEnter() {
     this.initmap();
+
     this.loadmap();
   }
 
@@ -57,19 +58,23 @@ export class MapAdminPage {
   onFilterChanged(segmentButton) {
     switch (segmentButton.value) {
       case "All":
-      this.map.addLayer(this.markerCurrent);
-      this.map.addLayer(this.markerHisto);
-      break;
+        this.map.addLayer(this.markerCurrent);
+        this.map.addLayer(this.markerHisto);
+        break;
       case "Me":
-      this.map.removeLayer(this.markerCurrent);
-      this.map.addLayer(this.markerHisto);
-      break;
+        this.map.removeLayer(this.markerCurrent);
+        this.map.addLayer(this.markerHisto);
+        break;
+      case "Alerts":
+        this.map.removeLayer(this.markerCurrent);
+        this.map.addLayer(this.markerHisto);
+        break;
       case "Current":
-      this.map.addLayer(this.markerCurrent);
-      this.map.removeLayer(this.markerHisto);
-      break;
+        this.map.addLayer(this.markerCurrent);
+        this.map.removeLayer(this.markerHisto);
+        break;
       default:
-      throw new Error("Unexpected segment value");
+        throw new Error("Unexpected segment value");
     }
   }
 
@@ -192,8 +197,8 @@ export class MapAdminPage {
         let id  = 0
         var customPopup;
         for (let e of data.self) {
-          customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
-          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (id++===0)?this.IconGreen:this.IconGrey}).bindPopup(customPopup,{closeButton:false})
+          customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude;
+          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: this.IconRed}).bindPopup(customPopup,{closeButton:false})
           if(id == 1)
             this.markerMe.addLayer(marker);
           else

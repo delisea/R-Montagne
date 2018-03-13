@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, IonicPage, ToastController } from 'ionic-angular';
+import { NavController, AlertController, IonicPage, ToastController, Events } from 'ionic-angular';
 import { AuthService } from '../../providers/auth-service/auth-service';
 
 @IonicPage()
@@ -21,9 +21,9 @@ export class AccountPage {
   licenseEndDate;
   licenseactive = false;
   licenseIsEmpty = true;
-  license: null;
+  license: number;
 
-  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController) {
+  constructor(private nav: NavController, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController, private events: Events) {
     this.auth.request('licenseTemp/get.php', {}).then(data => {
       if(!(data[0]===undefined)){
         if(data[0].endDate>Math.floor(Date.now() / 1000)){
@@ -122,6 +122,16 @@ activateLicense(){
   this.auth.request('licenseTemp/update.php', {license: this.license}).then(data => {
     if(data.success){
       this.showToast('License '+this.license+' activated');
+      if(this.license/1000000==1 || this.license/1000000==2){
+        this.auth.setAdmin();
+        this.credentials.admin = true;
+      }
+      if(this.license/1000000>0){
+        this.auth.setRescuer();
+        this.credentials.rescuer = true;
+        this.events.publish('menu:refresh');
+      }
+      else
       this.auth.request('licenseTemp/get.php', {}).then(data => {
         if(data[0].endDate>Math.floor(Date.now() / 1000)){
           this.licenseEndDate= data[0].endDate;
@@ -136,7 +146,7 @@ activateLicense(){
       this.showToast(data.message);
       this.license = null;
     }
-  })
+  });
 }
 
   showPopup(title, text) {

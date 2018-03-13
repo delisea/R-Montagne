@@ -23,6 +23,7 @@ export class MyApp {
 
   constructor(private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     // used for an example of ngFor and navigation
+
     this.pages = [
       { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0, showed : true},
       //{ title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
@@ -41,12 +42,18 @@ export class MyApp {
             for(var m of data.maps) {
               this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin)?MapAdminPage:MapPage, param: m.idMap, showed : true });
             }
-            this.rootPageName = this.pages[2].title;
-            this.openPage(this.pages[2]);
+            if(this.pages[2]!==undefined){
+              this.rootPageName = this.pages[2].title;
+              this.openPage(this.pages[2]);
+            }
+            else{
+              this.rootPageName = this.pages[0].title;
+              this.openPage(this.pages[0]);
+            }
             //this.openMap(1,1);
-                      this.auth.getUserInfo().then(u => {
-            this.pages[1].showed = u.logInfos.admin;
-          });
+            this.auth.getUserInfo().then(u => {
+              this.pages[1].showed = u.logInfos.admin;
+            });
           });
         }
         else {
@@ -62,6 +69,9 @@ export class MyApp {
       events.subscribe('alert:pop', (map, target) => {
         this.rootPageName = this.pages[2].title;
         this.openMap(map, target);
+      });
+      events.subscribe('menu:refresh', () => {
+        this.refreshMenu();
       });
       events.subscribe('page:change',(page) => {
         this.rootPageName = this.pages[page].title;
@@ -89,6 +99,23 @@ export class MyApp {
     this.nav.setRoot(this.pages[2].component, {
       param: map,
       add: target
+    });
+  }
+
+  refreshMenu(){
+     this.pages = [
+      { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0, showed : true},
+      //{ title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
+      { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2, showed : false}
+    ];
+    this.auth.request("watch/read.php", {}).then(async data => {
+      console.log(data);
+      for(var m of data.maps) {
+        this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin)?MapAdminPage:MapPage, param: m.idMap, showed : true });
+      }
+      this.auth.getUserInfo().then(u => {
+        this.pages[1].showed = u.logInfos.admin;
+      });
     });
   }
 

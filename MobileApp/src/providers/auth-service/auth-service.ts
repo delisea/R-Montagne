@@ -153,6 +153,16 @@ export class AuthService {
     });
   }
 
+  public setRescuer(){
+    this.currentUser.logInfos.rescuer = true;
+    this.storage.set('user', JSON.stringify(this.currentUser));
+  }
+
+  public setAdmin(){
+    this.currentUser.logInfos.admin = true;
+    this.storage.set('user', JSON.stringify(this.currentUser));
+  }
+
   public async logout() {
     if(!(await this.getUserInfo() === null)) {
       let params = new HttpParams();
