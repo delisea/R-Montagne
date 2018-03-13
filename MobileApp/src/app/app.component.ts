@@ -39,7 +39,7 @@ export class MyApp {
           this.auth.request("watch/read.php", {}).then(async data => {
             console.log(data);
             for(var m of data.maps) {
-              this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin == 1)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin == 1)?MapAdminPage:MapPage, param: m.idMap });
+              this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin)?MapAdminPage:MapPage, param: m.idMap });
             }
             this.rootPageName = this.pages[2].title;
             this.openPage(this.pages[2]);
