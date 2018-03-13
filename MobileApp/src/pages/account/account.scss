@@ -85,6 +85,12 @@ page-account {
 
   }
 
+ion-label[fixed] {
+  width: 70px;
+  min-width: 20px;
+  max-width: 80px;
+}
+
   .item-md.item-input.ng-valid.item-input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner, .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner {
     border-bottom-color: rgba(0,0,0,0);
     box-shadow: none;

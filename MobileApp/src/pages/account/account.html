@@ -29,7 +29,7 @@
             <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required [readonly]="isReadonly()"></ion-input>
           </ion-item>
           <ion-item class="notro" *ngIf="!isRO">
-            <ion-label fixed>Firstname</ion-label>
+            <ion-label floating>Firstname</ion-label>
             <ion-input type="text" placeholder="Firstname" name="firstName" [(ngModel)]="credentials.firstName" required [readonly]="isReadonly()"></ion-input>
           </ion-item>
           <ion-item class="ro" *ngIf="isRO">
@@ -56,17 +56,25 @@
             <ion-label fixed>Address</ion-label>
             <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required [readonly]="isReadonly()"></ion-input>
           </ion-item>
-          <ion-item class="ro" *ngIf="licenseactive">
+          <ion-item class="ro" *ngIf="licenseactive && !credentials.rescue">
             <ion-label fixed>License</ion-label>
             <ion-input type="text" class="custom-placeholder" placeholder="{{licenseCurrent}} is active until {{licenseEndDate * 1000 | date}}" name="licensed" required readonly></ion-input>
           </ion-item>
-          <ion-item class="ro" *ngIf="!licenseactive && !licenseIsEmpty && licenseCurrent!==null">
+          <ion-item class="ro" *ngIf="!licenseactive && !licenseIsEmpty && licenseCurrent!==null && !credentials.rescue">
             <ion-label fixed>License</ion-label>
             <ion-input type="text" placeholder="{{licenseCurrent}} is inactive" name="licensed" required readonly></ion-input>
           </ion-item>
-          <ion-item class="ro" *ngIf="licenseIsEmpty">
+          <ion-item class="ro" *ngIf="licenseIsEmpty && !credentials.rescue">
             <ion-label fixed>License</ion-label>
             <ion-input type="text" placeholder="No license detected" name="licensed" required readonly></ion-input>
+          </ion-item>
+          <ion-item class="ro" *ngIf="licenseIsEmpty && credentials.rescue">
+            <ion-label fixed>License</ion-label>
+            <ion-input type="text" placeholder="You are a rescuer" name="licensed" required readonly></ion-input>
+          </ion-item>
+          <ion-item class="ro" *ngIf="licenseactive && credentials.rescue">
+            <ion-label fixed>License</ion-label>
+            <ion-input type="text" placeholder="" name="licensed" required readonly></ion-input>
           </ion-item>
         </ion-list>
       </ion-col>

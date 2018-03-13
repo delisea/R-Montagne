@@ -1,7 +1,7 @@
 page-map {
   .leaflet-popup-content-wrapper {
-    background:#175717;
-    color:#FFDA8C;
+    background:#1c531c;
+    color:#dab671;
     font-size:12px;
     margin-bottom:20px;
   }
@@ -14,4 +14,11 @@ page-map {
     background:#ffffff;
     opacity:0;
   }
+
+  button {
+    color: #dab671;
+    background: #1c531c;
+  }
+
+
 }

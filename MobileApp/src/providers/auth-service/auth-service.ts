@@ -85,19 +85,7 @@ export class AuthService {
         observer.next(this.logres.success === 1);
         if(this.logres.success === 1)
           this.storage.set('user', JSON.stringify(this.currentUser));
-        var alert=undefined;
-        this.db.object('/alerts/1').subscribe(data => {
-          Object.keys(data).forEach(function(key,index) {
-            console.log(data[key]);
-            if(alert===undefined || alert.time<data[key].time){
-              alert = data[key];
-            }
-          });
-          if(alert!==undefined){
-            console.log(alert);
-            this.scheduleSingleNotif(alert);
-          }
-        });
+        this.initNotif();
         if(this.logres.success === 1)
           this.events.publish('log:change', this.logres.success === 1);
         observer.complete();
@@ -105,9 +93,26 @@ export class AuthService {
     });
   }
 
+  public initNotif(){
+    var alert=undefined;
+    this.db.object('/alerts/2').subscribe(data => {// /1
+      Object.keys(data).forEach(function(key,index) {
+        console.log(data[key]);
+        if(alert===undefined || alert.time<data[key].time){
+          alert = data[key];
+        }
+      });
+      if(alert!==undefined){
+        console.log(alert);
+        this.scheduleSingleNotif(alert);
+      }
+    });
+  }
+
   public async relog() {
     if((await this.getUserInfo()) === null)
       return;
+    this.initNotif();
     this.events.publish('log:change', 1);
   }
 

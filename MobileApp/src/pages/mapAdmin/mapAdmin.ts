@@ -112,7 +112,7 @@ export class MapAdminPage {
     });
 
     this.IconWhite = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_white.png",
+      iconUrl: "../../assets/imgs/pointer_orange.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
@@ -206,7 +206,7 @@ export class MapAdminPage {
         }
         for (let e of data.beacons) {
           var popupBeacon = document.createElement('button');
-          popupBeacon.innerHTML = 'move';
+          popupBeacon.innerHTML = 'Tap to Move';
           //customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
           let tl = this.markerBeacon;
           let ti = this.IconPurple;
@@ -259,7 +259,7 @@ export class MapAdminPage {
           for(var point of data.map.polygon) {
             this.PolygonPoints.push([point.longitude, point.latitude]);
             customPopup = document.createElement('button');
-            customPopup.innerHTML = 'move';
+            customPopup.innerHTML = 'Tap to Move';
             this.PolygonMarker[i] = Leaflet.marker([point.longitude, point.latitude], {icon: this.IconWhite}).bindPopup(customPopup,{closeButton:false})
 
             let tl = this.markerPol;
@@ -307,7 +307,7 @@ export class MapAdminPage {
   popSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
     layer.removeLayer(marker);
     var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'stop';
+    popupBeacon.innerHTML = 'Tap to Stop';
     popupBeacon.onclick = function () {
       popUnSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
     }
@@ -318,7 +318,7 @@ export class MapAdminPage {
   popUnSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
     layer.removeLayer(marker);
     var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'move';
+    popupBeacon.innerHTML = 'Tap to Move';
     popupBeacon.onclick = function () {
       popSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
     }
@@ -330,7 +330,7 @@ export class MapAdminPage {
   PpopSetMove(marker: any, layer: any, popupMoving: any, polygon: any, order: any, icon: any, popSetMove: any, popUnSetMove: any) {
     layer.removeLayer(marker);
     var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'stop';
+    popupBeacon.innerHTML = 'Tap to Stop';
     popupBeacon.onclick = function () {
       popUnSetMove(marker, layer, popupBeacon, polygon, order, icon, popSetMove, popUnSetMove);
     }
@@ -341,7 +341,7 @@ export class MapAdminPage {
   PpopUnSetMove(marker: any, layer: any, popupMoving: any, polygon: any, order: any, icon: any, popSetMove: any, popUnSetMove: any) {
     layer.removeLayer(marker);
     var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'move';
+    popupBeacon.innerHTML = 'Tap to Move';
     popupBeacon.onclick = function () {
       popSetMove(marker, layer, popupBeacon, polygon, order, icon, popSetMove, popUnSetMove);
     }
@@ -367,7 +367,7 @@ export class MapAdminPage {
     this.markerPol.removeLayer(this.PolygonMarker[index]);
     this.PolygonPoints[index] = this.PolygonMarker[index].getLatLng()
     var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'move';
+    popupBeacon.innerHTML = 'Tap to Move';
     let evt = this.events
     let ll = this.PolygonMarker[index].getLatLng()
     popupBeacon.onclick = function () {
@@ -384,7 +384,7 @@ export class MapAdminPage {
     var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
     this.markerPol.removeLayer(this.PolygonMarker[index]);
     var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'stop';
+    popupBeacon.innerHTML = 'Tap to Stop';
     let evt = this.events
     popupBeacon.onclick = function () {
       evt.publish('Admin:BorderStopMove', lonlat);
