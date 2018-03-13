@@ -23,6 +23,9 @@
       </button>
       <ion-title>
         {{rootPageName}}
+        <button *ngIf="isMapAdmin()" ion-button icon-only (click)="modifyTitle()">
+          <ion-icon name="pencil"></ion-icon>
+        </button>
       </ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="logout()">

@@ -12,8 +12,11 @@ export class TrackerPage {
   credentials: any;
   nbdays: any;
   isMo = false;
-  trackers;
+  isTr = false;
+  trackers = [];
   activation = { licenses : null, map : null, days : null };
+  rescuer = { map : null };
+  rescuers = [];
   maps = { idMap: [], name: [] };
   m;
   freeTrackers = 0;
@@ -34,6 +37,12 @@ export class TrackerPage {
         }
       }
     });
+
+    this.auth.request('RescuerLicense/get.php', {}).then(data => {
+      if(data !== null) {
+        this.rescuers = data.license;
+      }
+    });
   }
 
   showToast(mes) {
@@ -49,10 +58,17 @@ export class TrackerPage {
   addLicenses(){
     this.isMo = true;
   }
+  addRescuer(){
+    this.isTr = true;
+  }
 
   cancelActivation(){
     this.isMo = false;
     this.activation = { licenses : null, map : null, days : null };
+  }
+  cancelRescuer(){
+    this.isTr = false;
+    this.rescuer = { map : null };
   }
 
   addActivation(){
@@ -63,7 +79,7 @@ export class TrackerPage {
           this.showToast(this.activation.licenses+' Trackers Activated');
           this.freeTrackers = this.freeTrackers - this.activation.licenses;
           this.activation = { licenses : null, map : null, days : null };
-          this.events.publish('page:change', 2);
+          this.events.publish('page:change', 1);
         }
         else{
           this.showToast(data.error);
@@ -75,5 +91,20 @@ export class TrackerPage {
       this.showToast('Number of days must be positive');
       this.activation.days = null;
     }
+  }
+
+  addRescuerActivation(){
+    this.isTr = false;
+    this.auth.request('RescuerLicense/post.php', { map: this.rescuer.map }).then(data => {
+      if(data.success){
+        this.showToast('License Rescuer '+data.license+' Activated');
+        this.rescuer = { map : null };
+        this.events.publish('page:change', 1);
+      }
+      else{
+        this.showToast(data.error);
+        this.rescuer = { map : null };
+      }
+    });
   }
 }

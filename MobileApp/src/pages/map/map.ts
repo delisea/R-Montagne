@@ -20,7 +20,7 @@ export class MapPage {
   markerHisto;
   markerMe;
 
-rescuer: number = 0;
+rescuer: boolean = false;
 
 IconGreen: any;
 IconRed: any;
@@ -38,8 +38,8 @@ IconBlue: any;
   ionViewDidEnter() {
     this.initmap();
     this.auth.getUserInfo().then(data => {
-      this.rescuer = data.logInfos.rescuer;console.log(this.rescuer)
-      this.loadmap();      
+      this.rescuer = data.logInfos.rescuer;console.log(this.rescuer);
+      this.loadmap();
     })
   }
 
@@ -142,8 +142,8 @@ IconBlue: any;
         var customPopup;
         for (let e of data.self) {
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude;
-          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/((this.rescuer == 0))?{icon: (id++===0)?this.IconGreen:this.IconGrey}:{icon: this.IconRed}).bindPopup(customPopup,{closeButton:false})
-          if(id == 1)
+          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/((this.rescuer))?{icon: (id++===0)?this.IconGreen:this.IconGrey}:{icon: this.IconRed}).bindPopup(customPopup,{closeButton:false})
+          if(e.date == data.last)
             this.markerMe.addLayer(marker);
           else
             this.markerHisto.addLayer(marker);

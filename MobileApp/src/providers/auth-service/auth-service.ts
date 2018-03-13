@@ -28,8 +28,8 @@ export interface UserInfos{
   email: string;
   phone: string;
   address: string;
-  rescuer: number;
-  admin: number;
+  rescuer: boolean;
+  admin: boolean;
 }
 
 export interface LogResponse{

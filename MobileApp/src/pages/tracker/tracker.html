@@ -11,10 +11,39 @@
     <ion-row>
       <ion-col>
         <ion-list inset>
-          <ion-item class="status">
-            <ion-label> There are currently {{freeTrackers}} trackers without activated license</ion-label>
-          </ion-item>
+          <ion-row *ngIf="!isTr">
+            <ion-col class="signup-col">
+              <button *ngIf="!isMo" ion-button class="register-btn" block clear (click)="addRescuer()">Add Rescuer</button>
+            </ion-col>
+          </ion-row>
+        </ion-list>
 
+        <ion-list inset *ngIf="isTr">
+          <ion-item class="notro">
+            <ion-label>Map</ion-label>
+            <ion-select [(ngModel)]="rescuer.map">
+              <ion-option *ngFor="let map of maps" value="{{map.idMap}}">{{map.name}}</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-row>
+            <ion-col class="signup-col">
+              <button ion-button class="register-btn" block clear (click)="cancelRescuer()">Cancel Rescuer</button>
+              <button ion-button class="register-btn" block clear (click)="addRescuerActivation()">Validate Rescuer</button>
+            </ion-col>
+          </ion-row>
+        </ion-list>
+
+        <ion-list inset>
+          <ion-item class="ro" *ngFor="let re of rescuers">
+            <ion-label color="black">Rescuer</ion-label>
+            <ion-input type="text" class="custom-placeholder" placeholder="License {{re}}" readonly></ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-list inset>
+          <ion-item class="status">
+             <ion-label text-wrap color="light"> There are currently {{freeTrackers}} trackers without activated license</ion-label>
+          </ion-item>
           <ion-row *ngIf="!isCP">
             <ion-col class="signup-col">
               <button *ngIf="!isMo" ion-button class="register-btn" block clear (click)="addLicenses()">Add Licenses</button>
@@ -39,8 +68,8 @@
           </ion-item>
           <ion-row>
             <ion-col class="signup-col">
-              <button ion-button class="register-btn" block clear (click)="cancelActivation()">Cancel</button>
-              <button ion-button class="register-btn" block clear (click)="addActivation()">Validate</button>
+              <button ion-button class="register-btn" block clear (click)="cancelActivation()">Cancel Licenses</button>
+              <button ion-button class="register-btn" block clear (click)="addActivation()">Validate Licenses</button>
             </ion-col>
           </ion-row>
         </ion-list>
@@ -58,8 +87,8 @@
               <ion-input type="text" class="custom-placeholder" placeholder="No license attributed" readonly></ion-input>
             </ion-item>
           </ng-container>
-
         </ion-list>
+
       </ion-col>
     </ion-row>
   </div>
