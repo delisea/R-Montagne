@@ -68,7 +68,7 @@
             <ion-label fixed>License</ion-label>
             <ion-input type="text" class="custom-placeholder" placeholder="No license detected" name="licensed" required readonly></ion-input>
           </ion-item>
-          <ion-item class="ro" *ngIf="credentials.rescuer">
+          <ion-item class="ro" *ngIf="credentials.rescuer && !credentials.admin">
             <ion-label fixed>Status</ion-label>
             <ion-input type="text" class="custom-placeholder" placeholder="You are a rescuer" name="licensed" required readonly></ion-input>
           </ion-item>

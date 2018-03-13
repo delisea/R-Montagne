@@ -9,7 +9,7 @@
   <ion-content class="menu">
     <ion-list>
       <ng-container *ngFor="let p of pages">
-        <button class="menu" menuClose ion-item *ngIf="!(p.title==='Trackers')" (click)="openPage(p)">
+        <button class="menu" menuClose ion-item *ngIf="p.showed" (click)="openPage(p)">
           <ion-icon item-start [name]="p.icon" color="sable"></ion-icon>
           {{p.title}}
         </button>

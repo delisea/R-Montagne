@@ -19,14 +19,14 @@ export class MyApp {
   logged:boolean = false;
   rootPageName: string = "";
 
-  pages: Array<{title: string, icon: string, component: any, param: number}>;
+  pages: Array<{title: string, icon: string, component: any, param: number, showed : boolean}>;
 
   constructor(private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
+      { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0, showed : true},
       //{ title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
-      { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2}
+      { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2, showed : false}
     ];
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -39,18 +39,21 @@ export class MyApp {
           this.auth.request("watch/read.php", {}).then(async data => {
             console.log(data);
             for(var m of data.maps) {
-              this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin == 1)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin == 1)?MapAdminPage:MapPage, param: m.idMap });
+              this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin)?MapAdminPage:MapPage, param: m.idMap, showed : true });
             }
             this.rootPageName = this.pages[2].title;
             this.openPage(this.pages[2]);
             //this.openMap(1,1);
+                      this.auth.getUserInfo().then(u => {
+            this.pages[1].showed = u.logInfos.admin;
+          });
           });
         }
         else {
           this.pages = [
-            { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0},
+            { title: 'Account', icon: 'contact-custom', component: AccountPage , param: 0, showed : true},
             //{ title: 'MapAdmin', icon: 'contact-custom', component: MapAdminPage , param: 1},
-            { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2}
+            { title: 'Trackers', icon: 'location-custom', component: TrackerPage , param: 2, showed : false}
           ];
           this.rootPageName = "";
           this.nav.setRoot('LoginPage', {});
