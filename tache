@@ -1,20 +1,15 @@
-rescuer license vous etes rescuer
 notification on connect + spam
 interface cration product
-bouton gen rescuer
 board les 30s
 refresh
 noti refresh
 appli test pas ajout license si deja une
-rescuer refuse admin
 cacher page tracker en pas admin
-checker pourquoi hugo est pas sur bastille
 clean la bdd
 admin filter name
 soit virer license bar de account admin et rescuer ou metrtre en liste
 safe air watch surement
 bastilla a un point vert
-css du bouton move
 license beacon
 add beacon map
 (planification)
@@ -27,3 +22,8 @@ filtre admin rescuer
 bouton renommer map (crayon) + popup
 popup text tuto
 refresh admin lorsque new admin
+refaire les test coté mobile
+(loramote)
+fixer quand pas de watch
+refresh de tout (license, tracker, network ...)
+fixer current on multimap

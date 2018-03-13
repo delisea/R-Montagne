@@ -142,7 +142,7 @@ IconBlue: any;
         var customPopup;
         for (let e of data.self) {
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude;
-          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/((this.rescuer))?{icon: (id++===0)?this.IconGreen:this.IconGrey}:{icon: this.IconRed}).bindPopup(customPopup,{closeButton:false})
+          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/((!this.rescuer))?{icon: (id++===0)?this.IconGreen:this.IconGrey}:{icon: this.IconRed}).bindPopup(customPopup,{closeButton:false})
           if(e.date == data.last)
             this.markerMe.addLayer(marker);
           else
