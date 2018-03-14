@@ -44,6 +44,8 @@ export class MapAdminPage {
   ionViewWillLeave() {
     this.events.unsubscribe('Admin:BorderMove');
     this.events.unsubscribe('Admin:BorderStopMove');
+    this.events.unsubscribe('BeaconMap:SetMove');
+    this.events.unsubscribe('BeaconMap:UnSetMove');
     this.events.unsubscribe('Admin:BorderDrag');
     this.events.unsubscribe("Beacon:add");
     this.events.unsubscribe("Point:add");
@@ -51,6 +53,8 @@ export class MapAdminPage {
   ionViewDidEnter() {
     this.events.subscribe('Admin:BorderMove', (latlon) => {this.SetBorderMove(latlon)});
     this.events.subscribe('Admin:BorderStopMove', (latlon) => {this.UnSetBorderMove(latlon)});
+    this.events.subscribe('BeaconMap:SetMove', (latlon, idb) => {this.SetBeaconMove(latlon, idb)});
+    this.events.subscribe('BeaconMap:UnSetMove', (latlon, idb) => {this.UnSetBeaconMove(latlon, idb)});
     this.events.subscribe('Admin:BorderDrag', (latlon) => {this.DragBorder(latlon)});
     this.events.subscribe("Beacon:add", () => this.addBeacon());
     this.events.subscribe("Point:add", () => this.addPoint());
@@ -199,13 +203,10 @@ export class MapAdminPage {
                 var popupBeacon = document.createElement('button');
                 popupBeacon.innerHTML = 'Tap to Move';
                 //customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
-                let tl = this.markerBeacon;
-                let ti = this.IconPurple;
-                let f1 = this.popSetMove;
-                let f2 = this.popUnSetMove;
+                let evt = this.events;
                 let marker = Leaflet.marker(this.map.getBounds().getCenter(), {icon: this.IconPurple}).bindPopup(popupBeacon,{closeButton:true})
                 popupBeacon.onclick = function () {
-                  f1(marker, tl, popupBeacon, ti, f1, f2);
+                  evt.publish("BeaconMap:SetMove", marker);
                 }
                 this.map.removeLayer(this.markerBeacon);
                 this.markerBeacon.addLayer(marker);
@@ -398,13 +399,13 @@ export class MapAdminPage {
           var popupBeacon = document.createElement('button');
           popupBeacon.innerHTML = 'Tap to Move';
           //customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
-          let tl = this.markerBeacon;
-          let ti = this.IconPurple;
-          let f1 = this.popSetMove;
-          let f2 = this.popUnSetMove;
+          let evt = this.events;
+          let showToast = this.showToast;
+          let mapId = this.mapId;
+          let idb = e.id;
           let marker = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: this.IconPurple}).bindPopup(popupBeacon,{closeButton:true})
           popupBeacon.onclick = function () {
-            f1(marker, tl, popupBeacon, ti, f1, f2);
+            evt.publish("BeaconMap:SetMove", marker, idb);
             //console.log(marker.customprop)
             //console.log(42);
             //return false;
@@ -495,26 +496,67 @@ export class MapAdminPage {
       //this.map.on('click', onMapClick);
     }
 
-    popSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
+    popSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any, aut: any, showToast: any, mapId: any) {
       layer.removeLayer(marker);
       var popupBeacon = document.createElement('button');
       popupBeacon.innerHTML = 'Tap to Stop';
       popupBeacon.onclick = function () {
-        popUnSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
+        popUnSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove, aut, showToast, mapId);
       }
       marker = Leaflet.marker(marker.getLatLng(), {draggable: true, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
       layer.addLayer(marker);
     };
 
-    popUnSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
+    popUnSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any, aut: any, showToast: any, mapId: any) {
       layer.removeLayer(marker);
       var popupBeacon = document.createElement('button');
       popupBeacon.innerHTML = 'Tap to Move';
       popupBeacon.onclick = function () {
-        popSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
+        popSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove, aut, showToast, mapId);
       }
       marker = Leaflet.marker(marker.getLatLng(), {draggable: false, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
       layer.addLayer(marker);
+      aut.request("map/update.php",{map: mapId, latitude: marker.getLatLng().lat, longitude: marker.getLatLng().lng}).then(dd => {
+        if(dd.success) {
+          showToast(dd.message);
+        }
+        else {
+          showToast(dd.message);
+        }
+      });
+    };
+
+
+    UnSetBeaconMove(marker: any, idb: any) {console.log("unset")
+      let evt = this.events;
+      this.markerBeacon.removeLayer(marker);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Move';
+      marker = Leaflet.marker(marker.getLatLng(), {draggable: false, icon: this.IconPurple}).bindPopup(popupBeacon,{closeButton:true})
+      popupBeacon.onclick = function () {
+        evt.publish("BeaconMap:SetMove", marker, idb);
+      }
+      this.markerBeacon.addLayer(marker);
+      this.auth.request("beacon/update.php",{map: this.mapId, latitude: marker.getLatLng().lat, longitude: marker.getLatLng().lng, id: idb}).then(dd => {
+        if(dd.success) {
+          this.showToast(dd.message);
+        }
+        else {
+          this.showToast(dd.message);
+        }
+      });
+    };
+
+    SetBeaconMove(marker: any, idb: any) {console.log("set")
+      let evt = this.events;
+      this.markerBeacon.removeLayer(marker);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Stop';
+      marker = Leaflet.marker(marker.getLatLng(), {draggable: true, icon: this.IconPurple}).bindPopup(popupBeacon,{closeButton:true})
+      popupBeacon.onclick = function () {
+        evt.publish("BeaconMap:UnSetMove", marker, idb);
+      }
+      this.markerBeacon.addLayer(marker);
     };
 
 
