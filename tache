@@ -1,12 +1,9 @@
 notification on connect + spam
 interface cration product
 clean la bdd
-add beacon map
-push des modification du contour
-add point contour
+planification closest
 fixer current on multimap
 (popup text tuto)
-(planification)
 (supprimer point contour)
 (loramote)
 contour mobile?! ya erreur

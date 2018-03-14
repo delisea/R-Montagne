@@ -36,26 +36,34 @@ export class MapAdminPage {
   constructor(private alertCtrl: AlertController, private auth: AuthService, public navParams: NavParams, private events: Events, private toastCtrl: ToastController) {
     //    console.log(navParams.get('param'));
     this.mapId = navParams.get('param');
-    events.subscribe('Admin:BorderMove', (latlon) => {this.SetBorderMove(latlon)});
-    events.subscribe('Admin:BorderStopMove', (latlon) => {this.UnSetBorderMove(latlon)});
-    events.subscribe('Admin:BorderDrag', (latlon) => {this.DragBorder(latlon)});
     /*events.subscribe('Map:Rename', (name) => {
       this.auth.request("map/update.php",{map: 1, latitude: 1, longitude: 1});
     });*/
   }
 
+  ionViewWillLeave() {
+    this.events.unsubscribe('Admin:BorderMove');
+    this.events.unsubscribe('Admin:BorderStopMove');
+    this.events.unsubscribe('Admin:BorderDrag');
+    this.events.unsubscribe("Beacon:add");
+    this.events.unsubscribe("Point:add");
+  }
   ionViewDidEnter() {
+    this.events.subscribe('Admin:BorderMove', (latlon) => {this.SetBorderMove(latlon)});
+    this.events.subscribe('Admin:BorderStopMove', (latlon) => {this.UnSetBorderMove(latlon)});
+    this.events.subscribe('Admin:BorderDrag', (latlon) => {this.DragBorder(latlon)});
+    this.events.subscribe("Beacon:add", () => this.addBeacon());
+    this.events.subscribe("Point:add", () => this.addPoint());
     this.initmap();
     this.loadmap();
-    this.events.subscribe("Beacon:add", () => this.addBeacon());
     var alrt = this.events;
     var customControl  = Leaflet.Control.extend({
-      
+
       options: {
         position: 'topleft' 
         //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
       },
-      
+
       onAdd: function (map) {
         var container = Leaflet.DomUtil.create('a', 'leaflet-bar leaflet-control leaflet-control-custom');
 
@@ -77,10 +85,91 @@ export class MapAdminPage {
 
         return container;
       },
-      
+
+    });
+    var customControl2  = Leaflet.Control.extend({
+
+      options: {
+        position: 'topleft' 
+        //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
+      },
+
+      onAdd: function (map) {
+        var container = Leaflet.DomUtil.create('a', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+        container.style.backgroundColor = 'white';     
+        container.text = "Add Point";
+        container.style.text = "test";
+        container.style.fontSize = "2rem";
+        container.style.color = "grey";
+        container.style.fontFamily = "'Oswald', sans-serif";
+        container.style.textAlign = "center";
+        //container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
+        container.style.backgroundSize = "30px 30px";
+        container.style.width = '120px';
+        container.style.height = '30px';
+
+        container.onclick = function(){
+          alrt.publish("Point:add");
+        }
+
+        return container;
+      },
+
     });
     this.map.addControl(new customControl());
+    this.map.addControl(new customControl2());
   }
+
+    addPoint() {
+    let alert = this.alertCtrl.create({
+    title: 'Confirm point addition',
+    message: 'Do you want to add a point?',
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      },
+      {
+        text: 'Confirm',
+        handler: () => {
+          this.PolygonPoints.push([this.map.getBounds().getCenter().lat, this.map.getBounds().getCenter().lng]);
+          this.auth.request("MapPolygon/update.php",{map: this.mapId, points: JSON.stringify(this.PolygonPoints)}).then(dd => {
+              if(dd.success) {
+                this.map.removeLayer(this.PolygonImage)
+                this.PolygonImage = Leaflet.featureGroup();
+                var polygon = Leaflet.polygon(this.PolygonPoints, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.PolygonImage);
+                this.map.addLayer(this.PolygonImage);
+
+
+                this.map.removeLayer(this.markerPol);
+                 var popupBeacon = document.createElement('button');
+                popupBeacon.innerHTML = 'Tap to Move';
+                let evt = this.events
+                let x = [this.map.getBounds().getCenter().lat, this.map.getBounds().getCenter().lng]
+                popupBeacon.onclick = function () {
+                  evt.publish('Admin:BorderMove', x);}
+                let marker = Leaflet.marker(this.map.getBounds().getCenter(), {icon: this.IconWhite}).bindPopup(popupBeacon,{closeButton:true});
+                this.PolygonMarker.push(marker);
+                this.markerPol.addLayer(marker);
+                this.map.addLayer(this.markerPol);
+
+                this.showToast("Done!");
+              }
+              else {
+                this.showToast(dd.message);
+              }
+            });
+        }
+      }
+    ]
+  });
+  alert.present();
+  }
+
 
 
   addBeacon() {
@@ -383,6 +472,7 @@ export class MapAdminPage {
           this.map.addLayer(this.PolygonImage);
           this.map.addLayer(this.markerPol);
             // zoom the map to the polygon
+            if(i>0)
             this.map.fitBounds(polygon.getBounds());
             //this.map.setView([Number(data.map.centerLatitude), Number(data.map.centerLongitude)], data.map.zoom)
           });
@@ -466,7 +556,7 @@ export class MapAdminPage {
       var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
       this.map.removeLayer(this.PolygonImage)
       this.markerPol.removeLayer(this.PolygonMarker[index]);
-      this.PolygonPoints[index] = this.PolygonMarker[index].getLatLng()
+      this.PolygonPoints[index] = [this.PolygonMarker[index].getLatLng().lat,this.PolygonMarker[index].getLatLng().lng];
       var popupBeacon = document.createElement('button');
       popupBeacon.innerHTML = 'Tap to Move';
       let evt = this.events
@@ -479,6 +569,14 @@ export class MapAdminPage {
       this.map.addLayer(this.PolygonImage);
       this.PolygonMarker[index] = Leaflet.marker(this.PolygonMarker[index].getLatLng(), {draggable: false, icon: this.IconWhite}).bindPopup(popupBeacon,{closeButton:true})
       this.markerPol.addLayer(this.PolygonMarker[index]);
+      this.auth.request("MapPolygon/update.php",{map: this.mapId, points: JSON.stringify(this.PolygonPoints)}).then(dd => {
+        if(dd.success) {
+          this.showToast(dd.message);
+        }
+        else {
+          this.showToast(dd.message);
+        }
+      });
     }
 
     SetBorderMove(lonlat: any) {
