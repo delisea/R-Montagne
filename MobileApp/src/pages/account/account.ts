@@ -122,11 +122,11 @@ activateLicense(){
   this.auth.request('licenseTemp/update.php', {license: this.license}).then(data => {
     if(data.success){
       this.showToast('License '+this.license+' activated');
-      if(this.license/1000000==1 || this.license/1000000==2){
+      if(Math.round(this.license/1000000)==1 || Math.round(this.license/1000000)==2){
         this.auth.setAdmin();
         this.credentials.admin = true;
       }
-      if(this.license/1000000>0){
+      if(Math.round(this.license/1000000)>0){
         this.auth.setRescuer();
         this.credentials.rescuer = true;
         this.events.publish('menu:refresh');

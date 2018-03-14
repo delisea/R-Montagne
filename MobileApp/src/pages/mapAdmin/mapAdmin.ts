@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavParams, IonicPage } from 'ionic-angular';
+import { ToastController, NavParams, IonicPage, AlertController } from 'ionic-angular';
 import Leaflet from 'leaflet';
 import { AuthService } from '../../providers/auth-service/auth-service';
 import { Events } from 'ionic-angular';
@@ -33,18 +33,114 @@ export class MapAdminPage {
   PolygonMarker = [];
 
 
-  constructor(private auth: AuthService, public navParams: NavParams, private events: Events) {
+  constructor(private alertCtrl: AlertController, private auth: AuthService, public navParams: NavParams, private events: Events, private toastCtrl: ToastController) {
     //    console.log(navParams.get('param'));
     this.mapId = navParams.get('param');
     events.subscribe('Admin:BorderMove', (latlon) => {this.SetBorderMove(latlon)});
     events.subscribe('Admin:BorderStopMove', (latlon) => {this.UnSetBorderMove(latlon)});
     events.subscribe('Admin:BorderDrag', (latlon) => {this.DragBorder(latlon)});
+    /*events.subscribe('Map:Rename', (name) => {
+      this.auth.request("map/update.php",{map: 1, latitude: 1, longitude: 1});
+    });*/
   }
 
   ionViewDidEnter() {
     this.initmap();
-
     this.loadmap();
+    this.events.subscribe("Beacon:add", () => this.addBeacon());
+    var alrt = this.events;
+    var customControl  = Leaflet.Control.extend({
+      
+      options: {
+        position: 'topleft' 
+        //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
+      },
+      
+      onAdd: function (map) {
+        var container = Leaflet.DomUtil.create('a', 'leaflet-bar leaflet-control leaflet-control-custom');
+
+        container.style.backgroundColor = 'white';     
+        container.text = "Add Beacon";
+        container.style.text = "test";
+        container.style.fontSize = "2rem";
+        container.style.color = "grey";
+        container.style.fontFamily = "'Oswald', sans-serif";
+        container.style.textAlign = "center";
+        //container.style.backgroundImage = "url(https://t1.gstatic.com/images?q=tbn:ANd9GcR6FCUMW5bPn8C4PbKak2BJQQsmC-K9-mbYBeFZm1ZM2w2GRy40Ew)";
+        container.style.backgroundSize = "30px 30px";
+        container.style.width = '120px';
+        container.style.height = '30px';
+
+        container.onclick = function(){
+          alrt.publish("Beacon:add");
+        }
+
+        return container;
+      },
+      
+    });
+    this.map.addControl(new customControl());
+  }
+
+
+  addBeacon() {
+    let alert = this.alertCtrl.create({
+      title: 'Add Beacon',
+      inputs: [
+      {
+        name: 'License',
+        placeholder: "Beacon license code",
+      }
+      ],
+      buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked');
+        }
+      },
+      {
+        text: 'Confirm',
+          handler: data => {//console.log(this.map.getBounds().getCenter(), this.mapId);
+            //this.events.publish('Map:Rename', data.Name);
+            this.auth.request("BeaconLicense/update.php",{map: this.mapId, latitude: this.map.getBounds().getCenter().lat, longitude: this.map.getBounds().getCenter().lng, license: data.License}).then(dd => {
+              if(dd.success) {
+                this.showToast("Done!");
+                var popupBeacon = document.createElement('button');
+                popupBeacon.innerHTML = 'Tap to Move';
+                //customPopup = "<strong>Beacon</strong><br>"+e.latitude+" - "+e.longitude
+                let tl = this.markerBeacon;
+                let ti = this.IconPurple;
+                let f1 = this.popSetMove;
+                let f2 = this.popUnSetMove;
+                let marker = Leaflet.marker(this.map.getBounds().getCenter(), {icon: this.IconPurple}).bindPopup(popupBeacon,{closeButton:true})
+                popupBeacon.onclick = function () {
+                  f1(marker, tl, popupBeacon, ti, f1, f2);
+                }
+                this.map.removeLayer(this.markerBeacon);
+                this.markerBeacon.addLayer(marker);
+                this.map.addLayer(this.markerBeacon);
+              }
+              else {
+                this.showToast(dd.message);
+              }
+            });
+          }
+        }
+        ]
+      });
+    alert.present();
+  }
+
+  showToast(mes) {
+    const toast = this.toastCtrl.create({
+      message: mes,
+      cssClass: 'toastaccount',
+      position: 'bottom',
+      duration: 5000
+    });
+    toast.present();
   }
 
   ionViewCanLeave() {
@@ -58,23 +154,23 @@ export class MapAdminPage {
   onFilterChanged(segmentButton) {
     switch (segmentButton.value) {
       case "All":
-        this.map.addLayer(this.markerCurrent);
-        this.map.addLayer(this.markerHisto);
-        break;
+      this.map.addLayer(this.markerCurrent);
+      this.map.addLayer(this.markerHisto);
+      break;
       case "Me":
-        this.map.removeLayer(this.markerCurrent);
-        this.map.addLayer(this.markerHisto);
-        break;
+      this.map.removeLayer(this.markerCurrent);
+      this.map.addLayer(this.markerHisto);
+      break;
       case "Alerts":
-        this.map.removeLayer(this.markerCurrent);
-        this.map.addLayer(this.markerHisto);
-        break;
+      this.map.removeLayer(this.markerCurrent);
+      this.map.addLayer(this.markerHisto);
+      break;
       case "Current":
-        this.map.addLayer(this.markerCurrent);
-        this.map.removeLayer(this.markerHisto);
-        break;
+      this.map.addLayer(this.markerCurrent);
+      this.map.removeLayer(this.markerHisto);
+      break;
       default:
-        throw new Error("Unexpected segment value");
+      throw new Error("Unexpected segment value");
     }
   }
 
@@ -309,95 +405,95 @@ export class MapAdminPage {
       //this.map.on('click', onMapClick);
     }
 
-  popSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
-    layer.removeLayer(marker);
-    var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'Tap to Stop';
-    popupBeacon.onclick = function () {
-      popUnSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
+    popSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
+      layer.removeLayer(marker);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Stop';
+      popupBeacon.onclick = function () {
+        popUnSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
+      }
+      marker = Leaflet.marker(marker.getLatLng(), {draggable: true, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
+      layer.addLayer(marker);
+    };
+
+    popUnSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
+      layer.removeLayer(marker);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Move';
+      popupBeacon.onclick = function () {
+        popSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
+      }
+      marker = Leaflet.marker(marker.getLatLng(), {draggable: false, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
+      layer.addLayer(marker);
+    };
+
+
+    PpopSetMove(marker: any, layer: any, popupMoving: any, polygon: any, order: any, icon: any, popSetMove: any, popUnSetMove: any) {
+      layer.removeLayer(marker);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Stop';
+      popupBeacon.onclick = function () {
+        popUnSetMove(marker, layer, popupBeacon, polygon, order, icon, popSetMove, popUnSetMove);
+      }
+      marker = Leaflet.marker(marker.getLatLng(), {draggable: true, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
+      layer.addLayer(marker);
+    };
+
+    PpopUnSetMove(marker: any, layer: any, popupMoving: any, polygon: any, order: any, icon: any, popSetMove: any, popUnSetMove: any) {
+      layer.removeLayer(marker);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Move';
+      popupBeacon.onclick = function () {
+        popSetMove(marker, layer, popupBeacon, polygon, order, icon, popSetMove, popUnSetMove);
+      }
+      marker = Leaflet.marker(marker.getLatLng(), {draggable: false, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
+      layer.addLayer(marker);
+    };
+
+
+
+    DragBorder(lonlat: any) {
+      var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
+      this.map.removeLayer(this.PolygonImage)
+      let tempPol = Object.assign([], this.PolygonPoints);
+      tempPol[index] = this.PolygonMarker[index].getLatLng()
+      this.PolygonImage = Leaflet.featureGroup();
+      var polygon = Leaflet.polygon(tempPol, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.PolygonImage);
+      this.map.addLayer(this.PolygonImage);
     }
-    marker = Leaflet.marker(marker.getLatLng(), {draggable: true, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
-    layer.addLayer(marker);
-  };
 
-  popUnSetMove(marker: any, layer: any, popupMoving: any, icon: any, popSetMove: any, popUnSetMove: any) {
-    layer.removeLayer(marker);
-    var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'Tap to Move';
-    popupBeacon.onclick = function () {
-      popSetMove(marker, layer, popupBeacon, icon, popSetMove, popUnSetMove);
+    UnSetBorderMove(lonlat: any) {
+      var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
+      this.map.removeLayer(this.PolygonImage)
+      this.markerPol.removeLayer(this.PolygonMarker[index]);
+      this.PolygonPoints[index] = this.PolygonMarker[index].getLatLng()
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Move';
+      let evt = this.events
+      let ll = this.PolygonMarker[index].getLatLng()
+      popupBeacon.onclick = function () {
+        evt.publish('Admin:BorderMove', ll);
+      }
+      this.PolygonImage = Leaflet.featureGroup();
+      var polygon = Leaflet.polygon(this.PolygonPoints, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.PolygonImage);
+      this.map.addLayer(this.PolygonImage);
+      this.PolygonMarker[index] = Leaflet.marker(this.PolygonMarker[index].getLatLng(), {draggable: false, icon: this.IconWhite}).bindPopup(popupBeacon,{closeButton:true})
+      this.markerPol.addLayer(this.PolygonMarker[index]);
     }
-    marker = Leaflet.marker(marker.getLatLng(), {draggable: false, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
-    layer.addLayer(marker);
-  };
 
-
-  PpopSetMove(marker: any, layer: any, popupMoving: any, polygon: any, order: any, icon: any, popSetMove: any, popUnSetMove: any) {
-    layer.removeLayer(marker);
-    var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'Tap to Stop';
-    popupBeacon.onclick = function () {
-      popUnSetMove(marker, layer, popupBeacon, polygon, order, icon, popSetMove, popUnSetMove);
-    }
-    marker = Leaflet.marker(marker.getLatLng(), {draggable: true, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
-    layer.addLayer(marker);
-  };
-
-  PpopUnSetMove(marker: any, layer: any, popupMoving: any, polygon: any, order: any, icon: any, popSetMove: any, popUnSetMove: any) {
-    layer.removeLayer(marker);
-    var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'Tap to Move';
-    popupBeacon.onclick = function () {
-      popSetMove(marker, layer, popupBeacon, polygon, order, icon, popSetMove, popUnSetMove);
-    }
-    marker = Leaflet.marker(marker.getLatLng(), {draggable: false, icon: icon}).bindPopup(popupBeacon,{closeButton:true})
-    layer.addLayer(marker);
-  };
-
-
-
-  DragBorder(lonlat: any) {
-    var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
-    this.map.removeLayer(this.PolygonImage)
-    let tempPol = Object.assign([], this.PolygonPoints);
-    tempPol[index] = this.PolygonMarker[index].getLatLng()
-    this.PolygonImage = Leaflet.featureGroup();
-    var polygon = Leaflet.polygon(tempPol, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.PolygonImage);
-    this.map.addLayer(this.PolygonImage);
-  }
-
-  UnSetBorderMove(lonlat: any) {
-    var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
-    this.map.removeLayer(this.PolygonImage)
-    this.markerPol.removeLayer(this.PolygonMarker[index]);
-    this.PolygonPoints[index] = this.PolygonMarker[index].getLatLng()
-    var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'Tap to Move';
-    let evt = this.events
-    let ll = this.PolygonMarker[index].getLatLng()
-    popupBeacon.onclick = function () {
-      evt.publish('Admin:BorderMove', ll);
-    }
-    this.PolygonImage = Leaflet.featureGroup();
-    var polygon = Leaflet.polygon(this.PolygonPoints, {color: '#b200ff88', fillColor: '#00000000'}).addTo(this.PolygonImage);
-    this.map.addLayer(this.PolygonImage);
-    this.PolygonMarker[index] = Leaflet.marker(this.PolygonMarker[index].getLatLng(), {draggable: false, icon: this.IconWhite}).bindPopup(popupBeacon,{closeButton:true})
-    this.markerPol.addLayer(this.PolygonMarker[index]);
-  }
-
-  SetBorderMove(lonlat: any) {
-    var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
-    this.markerPol.removeLayer(this.PolygonMarker[index]);
-    var popupBeacon = document.createElement('button');
-    popupBeacon.innerHTML = 'Tap to Stop';
-    let evt = this.events
-    popupBeacon.onclick = function () {
-      evt.publish('Admin:BorderStopMove', lonlat);
-    }
-    this.PolygonMarker[index] = Leaflet.marker(this.PolygonMarker[index].getLatLng(), {draggable: true, icon: this.IconWhite}).bindPopup(popupBeacon,{closeButton:true})
-    this.PolygonMarker[index].on('drag', function(e) {
+    SetBorderMove(lonlat: any) {
+      var index = this.PolygonPoints.findIndex(d => d[0] === lonlat[0] && d[1] === lonlat[1])
+      this.markerPol.removeLayer(this.PolygonMarker[index]);
+      var popupBeacon = document.createElement('button');
+      popupBeacon.innerHTML = 'Tap to Stop';
+      let evt = this.events
+      popupBeacon.onclick = function () {
+        evt.publish('Admin:BorderStopMove', lonlat);
+      }
+      this.PolygonMarker[index] = Leaflet.marker(this.PolygonMarker[index].getLatLng(), {draggable: true, icon: this.IconWhite}).bindPopup(popupBeacon,{closeButton:true})
+      this.PolygonMarker[index].on('drag', function(e) {
         evt.publish('Admin:BorderDrag', lonlat);
-     });
-    this.markerPol.addLayer(this.PolygonMarker[index]);
+      });
+      this.markerPol.addLayer(this.PolygonMarker[index]);
+    }
   }
-}

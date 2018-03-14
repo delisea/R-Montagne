@@ -1,12 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { ToastController, Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { MapPage } from '../pages/map/map';
 import { MapAdminPage } from '../pages/mapAdmin/mapAdmin';
 import { AccountPage } from '../pages/account/account';
 import { TrackerPage } from '../pages/tracker/tracker';
-import { Events } from 'ionic-angular';
+import { Events, AlertController  } from 'ionic-angular';
 import { AuthService } from '../providers/auth-service/auth-service';
 
 
@@ -18,10 +18,11 @@ export class MyApp {
   rootPage:any = 'LoginPage';
   logged:boolean = false;
   rootPageName: string = "";
+  currentparam: number = 0;
 
   pages: Array<{title: string, icon: string, component: any, param: number, showed : boolean}>;
 
-  constructor(private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
+  constructor(private alertCtrl: AlertController, private auth: AuthService, public events: Events, platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, private toastCtrl: ToastController) {
     // used for an example of ngFor and navigation
 
     this.pages = [
@@ -89,6 +90,7 @@ export class MyApp {
     // we wouldn't want the back button to show in this scenario
     //console.log("move" + page.param);
     this.rootPageName = page.title;
+    this.currentparam = page.param;
     this.nav.setRoot(page.component, {
       param: page.param
     });
@@ -96,6 +98,7 @@ export class MyApp {
 
   openMap(map, target) {
     this.rootPageName = this.pages[2].title;
+    this.currentparam = map;
     this.nav.setRoot(this.pages[2].component, {
       param: map,
       add: target
@@ -121,5 +124,53 @@ export class MyApp {
 
    logout() {
     this.auth.logout();
+  }
+
+  modifyTitle() {
+  let alert = this.alertCtrl.create({
+    title: 'Rename',
+    inputs: [
+      {
+        name: 'Name',
+        placeholder: this.rootPageName.substring(7),
+      }
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel clicked');
+        }
+      },
+      {
+        text: 'Confirm',
+        handler: data => {
+          //this.events.publish('Map:Rename', data.Name);
+          this.auth.request("map/update.php",{map: this.currentparam, name: data.Name}).then(dd => {
+            if(dd.success) {
+              this.rootPageName = "Admin: " + data.Name;
+              this.refreshMenu();
+              this.showToast("Done!");
+            }
+            else {
+              this.showToast(dd.message);
+            }
+          });
+        }
+      }
+    ]
+  });
+  alert.present();
+  }
+
+  showToast(mes) {
+    const toast = this.toastCtrl.create({
+      message: mes,
+      cssClass: 'toastaccount',
+      position: 'bottom',
+      duration: 5000
+    });
+    toast.present();
   }
 }

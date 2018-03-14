@@ -80,7 +80,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="!isAL && !isCP && isRO">
+    <ion-row *ngIf="!isAL && !isCP && isRO && !licenseactive">
       <ion-col class="signup-col">
         <button ion-button class="register-btn" block clear (click)="addLicense()">Add License</button>
       </ion-col>
