@@ -93,15 +93,15 @@ export class AuthService {
   }
 
   public initNotif(map){
-    var alert=undefined;
     this.db.object('/alerts/'+map).subscribe(data => {// /1
+    var alert=undefined;
       Object.keys(data).forEach(function(key,index) {
         //console.log(data[key]);
         if(alert===undefined || alert.time<data[key].time){
           alert = data[key];
         }
       });
-      if(alert!==undefined){
+      if(alert!==undefined && alert !== null){
         //console.log(alert);
         this.scheduleSingleNotif(alert);
       }
@@ -116,7 +116,7 @@ export class AuthService {
           alert = data[key];
         }
       });
-      if(alert!==undefined){
+      if(alert!==undefined && alert !== null){
         console.log(alert);
         this.events.publish("notif:refresh"+map,alert);
       }
