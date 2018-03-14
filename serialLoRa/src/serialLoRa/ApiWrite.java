@@ -15,6 +15,9 @@ public class ApiWrite implements Runnable, SerialPortEventListener {
 
 	static SerialPort com;
 	static String buffer = new String();
+	boolean backQuote = false;
+	boolean dollar = false;
+	boolean at = false;
 
 	public static void main(String[] pArgs) throws SerialPortException {
 
@@ -39,45 +42,70 @@ public class ApiWrite implements Runnable, SerialPortEventListener {
 
 	public void manageData(String data) throws IOException {
 		for (int i = 0; i < data.length(); i++) {
-			if (data.charAt(i) != '_') {
+			if (data.charAt(i) == '\r' || data.charAt(i) == '\n') {}
+			else if (data.charAt(i) == '`') {
+				backQuote = true;
+			}
+			else if (data.charAt(i) == '$' && backQuote) {
+				dollar = true;
+			}
+			else if (data.charAt(i) == '@' && backQuote && dollar) {
+				at = true;
+			}
+			else if (data.charAt(i) != '_' && backQuote && dollar && at) {
 				buffer += data.charAt(i);
-			} else {
+			} 
+			else if (data.charAt(i) == '_' && backQuote && dollar && at) {
+				backQuote = false;
+				dollar = false;
+				at = false;
 				historicCreate();
+			}
+			else {
+				backQuote = false;
+				dollar = false;
+				at = false;
+				buffer = "";
 			}
 		}
 	}
 
 	public void historicCreate() throws IOException {
+		System.out.println(buffer);
 		String[] dataSplitted = buffer.split(";");
-		URL url = new URL("http://closed.power-heberg.com/RMontagne/api/historic/create.php");
-		Map<String, Object> params = new LinkedHashMap<>();
-		params.put("id", dataSplitted[0]);
-		params.put("alert", dataSplitted[1]);
-		params.put("latitude", dataSplitted[2]);
-		params.put("longitude", dataSplitted[3]);
-		params.put("map", 1);
-
-		StringBuilder postData = new StringBuilder();
-		for (Map.Entry<String, Object> param : params.entrySet()) {
-			if (postData.length() != 0)
-				postData.append('&');
-			postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
-			postData.append('=');
-			postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+		if (dataSplitted.length >= 4) {
+			URL url = new URL("http://closed.power-heberg.com/RMontagne/api/historic/create.php");
+			Map<String, Object> params = new LinkedHashMap<>();
+			params.put("id", dataSplitted[0]);
+			params.put("alert", dataSplitted[1]);
+			params.put("latitude", dataSplitted[2]);
+			params.put("longitude", dataSplitted[3]);
+			params.put("map", 2);
+	
+			StringBuilder postData = new StringBuilder();
+			for (Map.Entry<String, Object> param : params.entrySet()) {
+				if (postData.length() != 0)
+					postData.append('&');
+				postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+				postData.append('=');
+				postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+			}
+			System.out.println(postData.toString());
+			byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+	
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+			conn.setDoOutput(true);
+			conn.getOutputStream().write(postDataBytes);
+	
+			Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+	
+			for (int c; (c = in.read()) >= 0;)
+				System.out.print((char) c);
 		}
-		byte[] postDataBytes = postData.toString().getBytes("UTF-8");
-
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-		conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-		conn.setDoOutput(true);
-		conn.getOutputStream().write(postDataBytes);
-
-		Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-		for (int c; (c = in.read()) >= 0;)
-			System.out.print((char) c);
+		buffer = "";
 	}
 
 	public void run() {
