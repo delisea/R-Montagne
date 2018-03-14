@@ -38,6 +38,7 @@ export class RegisterPage {
       params = params.append('address', this.registerCredentials.address);
       params = params.append('username', this.registerCredentials.username);
       params = params.append('password', this.registerCredentials.password);
+      params = params.append('rescuer', String(0));
       /*
       this.fire.auth.createUserWithEmailAndPassword(this.registerCredentials.email, this.registerCredentials.password).then(data => {
         console.log('grospenis', data);

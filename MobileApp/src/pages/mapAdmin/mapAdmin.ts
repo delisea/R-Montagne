@@ -66,14 +66,14 @@ export class MapAdminPage {
     var customControl  = Leaflet.Control.extend({
 
       options: {
-        position: 'topleft' 
+        position: 'topleft'
         //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
       },
 
       onAdd: function (map) {
         var container = Leaflet.DomUtil.create('a', 'leaflet-bar leaflet-control leaflet-control-custom');
 
-        container.style.backgroundColor = 'white';     
+        container.style.backgroundColor = 'white';
         container.text = "Add Beacon";
         container.style.text = "test";
         container.style.fontSize = "2rem";
@@ -96,14 +96,14 @@ export class MapAdminPage {
     var customControl2  = Leaflet.Control.extend({
 
       options: {
-        position: 'topleft' 
+        position: 'topleft'
         //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
       },
 
       onAdd: function (map) {
         var container = Leaflet.DomUtil.create('a', 'leaflet-bar leaflet-control leaflet-control-custom');
 
-        container.style.backgroundColor = 'white';     
+        container.style.backgroundColor = 'white';
         container.text = "Add Point";
         container.style.text = "test";
         container.style.fontSize = "2rem";
@@ -275,37 +275,37 @@ export class MapAdminPage {
     }).addTo(this.map);
 
     this.IconGreen = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_green.png",
+      iconUrl: "assets/imgs/pointer_green.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconRed = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_red.png",
+      iconUrl: "assets/imgs/pointer_red.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconGrey = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_grey.png",
+      iconUrl: "assets/imgs/pointer_grey.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconPurple = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_purple.png",
+      iconUrl: "assets/imgs/pointer_purple.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconBlue = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_blue.png",
+      iconUrl: "assets/imgs/pointer_blue.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
 
     this.IconWhite = Leaflet.icon({
-      iconUrl: "../../assets/imgs/pointer_orange.png",
+      iconUrl: "assets/imgs/pointer_orange.png",
       iconSize: [30, 30], // size of the icon
       iconAnchor: [15, 30]
     });
@@ -375,7 +375,7 @@ export class MapAdminPage {
 
   this.auth.request("generic/getInfo.php", {map : this.mapId}).then(data => {
     let customMarker = Leaflet.Marker.extend({
-       options: { 
+       options: {
           id: -1
        }
     });

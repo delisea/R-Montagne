@@ -50,7 +50,22 @@
   .ion-md-location-custom {
     content: url("../assets/imgs/location.png") !important;
   }
+
 }
+
+  .button-md {
+    margin: 0;
+    margin-left: 5px;
+    background-color: #1c531c;
+    border-radius: 0;
+    color: #dab671;
+    height: 3rem;
+    box-shadow: none;
+  }
+
+  .button {
+  position : fixed;
+  }
 
 .menu .scroll-content {
 	overflow-y: hidden;
