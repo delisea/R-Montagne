@@ -106,6 +106,10 @@ page-tracker {
     box-shadow: none;
   }
 
+  .list-md[inset] {
+    margin: 0;
+  }
+
   ion-input {
     &.custom-placeholder {
       ::placeholder {
