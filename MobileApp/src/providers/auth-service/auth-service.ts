@@ -49,6 +49,7 @@ export interface SucResponse{
 
 @Injectable()
 export class AuthService {
+  lastlog: number;
   currentUser: User;
   logres: LogResponse;
   regres: RegResponse;
@@ -87,14 +88,17 @@ export class AuthService {
           this.storage.set('user', JSON.stringify(this.currentUser));
         if(this.logres.success === 1)
           this.events.publish('log:change', this.logres.success === 1);
+        this.lastlog = (new Date).getTime();
         observer.complete();
       });
     });
   }
 
   public initNotif(map){
+    let ll = this.lastlog;
     this.db.object('/alerts/'+map).subscribe(data => {// /1
     var alert=undefined;
+      if((new Date).getTime() - ll < 3000) return;
       Object.keys(data).forEach(function(key,index) {
         //console.log(data[key]);
         if(alert===undefined || alert.time<data[key].time){
@@ -126,6 +130,7 @@ export class AuthService {
   public async relog() {
     if((await this.getUserInfo()) === null)
       return;
+    this.lastlog = (new Date).getTime();
     this.events.publish('log:change', 1);
   }
 
