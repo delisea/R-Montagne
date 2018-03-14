@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams, IonicPage } from 'ionic-angular';
+import { NavController, NavParams, IonicPage, Events } from 'ionic-angular';
 import Leaflet from 'leaflet';
 import { AuthService } from '../../providers/auth-service/auth-service';
 
@@ -29,13 +29,18 @@ IconPurple: any;
 IconBlue: any;
 
 
-  constructor(public nav: NavController, private auth: AuthService, public navParams: NavParams) {
+  constructor(public nav: NavController, private auth: AuthService, public navParams: NavParams, private events: Events) {
     //    console.log(navParams.get('param'));
     this.mapId = navParams.get('param');
     this.target = navParams.get('add');
+    console.log(this.target);
   }
 
+  ionViewWillLeave() {
+    this.events.unsubscribe("notif:refresh");
+  }
   ionViewDidEnter() {
+    this.events.subscribe("notif:refresh"+this.mapId, (alert) => this.refresh(alert, this.IconRed, this.IconBlue));
     this.initmap();
     this.auth.getUserInfo().then(data => {
       this.rescuer = data.logInfos.rescuer;
@@ -130,6 +135,11 @@ IconBlue: any;
 
 
     this.auth.request("generic/getInfo.php", {map : this.mapId}).then(data => {
+    let customMarker = Leaflet.Marker.extend({
+       options: {
+          id: -1
+       }
+    });
       console.log(data);
         //let markerGroup = Leaflet.featureGroup();
         this.markerBeacon = Leaflet.featureGroup();
@@ -150,7 +160,7 @@ IconBlue: any;
         }
         for (let e of data.others) {
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
-          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (e.alert==="1")?this.IconRed:this.IconBlue}).bindPopup(customPopup,{closeButton:false})
+          let marker: any = new customMarker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{id: e.idTracker, icon: (e.alert==="1")?this.IconRed:this.IconBlue}).bindPopup(customPopup,{closeButton:false})
           this.markerCurrent.addLayer(marker);
           if(this.target == e.idTracker)
             targetTrack = marker;
@@ -205,4 +215,18 @@ IconBlue: any;
       this.map.on('click', onMapClick);
   }
 
+
+    refresh(alert, icr, icb) {
+      console.log("refresh de" , alert);
+      this.map.eachLayer(function (layer) {
+          //layer.bindPopup('Hello');
+          if(layer.options.id == alert.id_tracker) {
+            console.log("refresh", layer.options.id );
+            layer.setLatLng([alert.lat, alert.lon]);
+            layer.options.icon = (alert.al==="1")?icr:icb;
+            let customPopup = "<strong>"+alert.date+"</strong><br>"+alert.lat+" - "+alert.lon
+            layer.bindPopup(customPopup,{closeButton:false})
+          }
+      });
+    }
 }
