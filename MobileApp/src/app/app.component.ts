@@ -42,6 +42,8 @@ export class MyApp {
             console.log(data);
             for(var m of data.maps) {
               this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin)?MapAdminPage:MapPage, param: m.idMap, showed : true });
+              this.auth.initNotifRefresh(m.idMap);
+              this.auth.initNotif(m.idMap);
             }
             if(this.pages[2]!==undefined){
               this.rootPageName = this.pages[2].title;
@@ -115,6 +117,8 @@ export class MyApp {
       console.log(data);
       for(var m of data.maps) {
         this.pages.push({ title: (((await this.auth.getUserInfo()).logInfos.admin)?"Admin: ":"")+/*'Map: '+*/m.name, icon: 'map-custom', component: ((await this.auth.getUserInfo()).logInfos.admin)?MapAdminPage:MapPage, param: m.idMap, showed : true });
+        this.auth.initNotifRefresh(m.idMap);
+        this.auth.initNotif(m.idMap);
       }
       this.auth.getUserInfo().then(u => {
         this.pages[1].showed = u.logInfos.admin;

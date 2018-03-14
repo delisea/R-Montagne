@@ -49,6 +49,7 @@ export class MapAdminPage {
     this.events.unsubscribe('Admin:BorderDrag');
     this.events.unsubscribe("Beacon:add");
     this.events.unsubscribe("Point:add");
+    this.events.unsubscribe("notif:refresh");
   }
   ionViewDidEnter() {
     this.events.subscribe('Admin:BorderMove', (latlon) => {this.SetBorderMove(latlon)});
@@ -58,6 +59,7 @@ export class MapAdminPage {
     this.events.subscribe('Admin:BorderDrag', (latlon) => {this.DragBorder(latlon)});
     this.events.subscribe("Beacon:add", () => this.addBeacon());
     this.events.subscribe("Point:add", () => this.addPoint());
+    this.events.subscribe("notif:refresh"+this.mapId, (alert) => this.refresh(alert));
     this.initmap();
     this.loadmap();
     var alrt = this.events;
@@ -372,6 +374,11 @@ export class MapAdminPage {
   );*/
 
   this.auth.request("generic/getInfo.php", {map : this.mapId}).then(data => {
+    let customMarker = Leaflet.Marker.extend({
+       options: { 
+          id: -1
+       }
+    });
     console.log(data);
         //let markerGroup = Leaflet.featureGroup();
         this.markerBeacon = Leaflet.featureGroup();
@@ -392,7 +399,7 @@ export class MapAdminPage {
         }
         for (let e of data.others) {
           customPopup = "<strong>"+e.date+"</strong><br>"+e.latitude+" - "+e.longitude
-          let marker: any = Leaflet.marker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{icon: (e.alert==="1")?this.IconRed:this.IconBlue}).bindPopup(customPopup,{closeButton:false})
+          let marker: any = new customMarker([Number(e.latitude), Number(e.longitude)]/*{lat: e.latitude, lon: e.longitude}*/, /*{icon:(Number(e.id)==2)?this.IconRed:this.IconBlue}*/{id: e.idTracker, icon: (e.alert==="1")?this.IconRed:this.IconBlue}).bindPopup(customPopup,{closeButton:false})
           this.markerCurrent.addLayer(marker);
         }
         for (let e of data.beacons) {
@@ -635,5 +642,18 @@ export class MapAdminPage {
         evt.publish('Admin:BorderDrag', lonlat);
       });
       this.markerPol.addLayer(this.PolygonMarker[index]);
+    }
+
+    refresh(alert) {
+      console.log("refresh de" , alert);
+      this.map.eachLayer(function (layer) {
+          //layer.bindPopup('Hello');
+          if(layer.options.id == alert.id_tracker) {
+            console.log("refresh", layer.options.id );
+            layer.setLatLng([alert.lat, alert.lon]);
+            let customPopup = "<strong>"+alert.date+"</strong><br>"+alert.lat+" - "+alert.lon
+            layer.bindPopup(customPopup,{closeButton:false})
+          }
+      });
     }
   }
