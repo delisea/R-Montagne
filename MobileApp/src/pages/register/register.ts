@@ -13,7 +13,6 @@ import { HttpParams } from '@angular/common/http/';
 export class RegisterPage {
   createSuccess = false;
   registerCredentials = { name: '', firstName: '', email: '', phone: '', address: '', username: '', password: '' };
-  isRescue = false;
 
   constructor(/*private fire: AngularFireAuth,*/ private nav: NavController, private auth: AuthService, private alertCtrl: AlertController) { }
 
@@ -39,7 +38,6 @@ export class RegisterPage {
       params = params.append('address', this.registerCredentials.address);
       params = params.append('username', this.registerCredentials.username);
       params = params.append('password', this.registerCredentials.password);
-      params = params.append('rescuer', String(this.isRescue));
       /*
       this.fire.auth.createUserWithEmailAndPassword(this.registerCredentials.email, this.registerCredentials.password).then(data => {
         console.log('grospenis', data);
