@@ -10,21 +10,18 @@ include_once '../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-if (isset($_POST['session']) && isset($_POST['idTracker']) && isset($_POST['idUser'])) {
-
-	session_id($_POST['session']);
-	session_start();
-
-	if (isset($_SESSION['id'])) {
-
-		$idTracker = htmlspecialchars(strip_tags($_POST['idTracker']));
-		$idUser = htmlspecialchars(strip_tags($_POST['idUser']));
-
-		$query = 'INSERT INTO Tracker SET idTracker=:idTracker, idUser=:idUser';
+		$query = 'INSERT INTO `Tracker`() VALUES ()';
 
 		$stmt = $db->prepare($query);
-		$stmt->bindParam('idTracker', $idTracker);
-		$stmt->bindParam('idUser', $idUser);
+
+                $stmt->execute();
+
+                $lid = $db->lastInsertId();
+		$query = 'INSERT INTO TrackerLicense SET id=:id, idTracker=:idb';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindValue('id', 1000000+$lid);
+		$stmt->bindParam('idb', $lid);
 
 		if ($stmt->execute()) {
 			echo json_encode(
@@ -35,13 +32,3 @@ if (isset($_POST['session']) && isset($_POST['idTracker']) && isset($_POST['idUs
 				array('success' => 0, 'message' => 'An error has occured')
 			);
 		}
-	} else {
-		echo json_encode(
-			array('success' => 0, 'message' => 'Invalid session')
-		);
-	}
-} else {
-	echo json_encode(
-		array('success' => 0, 'message' => 'Invalid parameters')
-	);
-}

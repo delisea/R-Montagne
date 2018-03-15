@@ -12,41 +12,31 @@ $db = $database->getConnection();
 
 if (isset($_POST['session'])) {
 
-	session_id($_POST['sessoin']);
+	session_id($_POST['session']);
 	session_start();
 
 	if (isset($_SESSION['id'])) {
-
-		$arr = array();
-		$arr['historics'] = array();
-
-		$query = 'SELECT idTracker, date, latitude, longitude, alert, map FROM Historic';
-
+		if(isset($_POST['map'])) {
+		$query = 'SELECT `id` FROM `RescuerLicense` WHERE idMap='.$_POST['map'].' ORDER BY id DESC LIMIT 1';
 		$stmt = $db->prepare($query);
 		$stmt->execute();
-		$num = $stmt->rowCount();
 
-		if (num > 0) {
-
-			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-				extract($row);
-
-				$entry = array(
-					'idTracker' => $idTracker,
-					'date' => $date,
-					'latitude' => $latitude,
-					'longitude' => $longitude,
-					'alert' => $alert,
-					'map' => $map
-				);
-
-				array_push($arr['historics'], $entry);
-			}
+		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$idl = (round($row['id']/1000)+1)*1000 + $_POST['map'] ;
 		}
+		else
+			$idl = 3000000 + $_POST['map'] ;
 
-		$arr['success'] = 1;
-		echo json_encode($arr);
+
+
+			$query = 'INSERT INTO RescuerLicense(id, IdMap) VALUES ('.$idl.', '.$_POST['map'].')';
+
+			$stmt = $db->prepare($query);
+			$stmt->execute();
+			echo json_encode(
+				array('success' => 1, 'license' => $idl)
+			);
+		}
 	} else {
 		echo json_encode(
 			array('success' => 0, 'message' => 'Invalid session')

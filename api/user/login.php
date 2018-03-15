@@ -18,7 +18,7 @@ if (isset($_POST['username'])) {
 
 		$password = htmlspecialchars(strip_tags($_POST['password']));
 
-		$query = "SELECT u.id, u.name, u.firstName, u.username, u.email, u.phone, u.address FROM  User as u WHERE username=:username AND password=:password";
+		$query = "SELECT u.id, u.name, u.firstName, u.username, u.email, u.phone, u.address, u.rescuer, u.admin, u.user AS duser FROM  User as u WHERE username=:username AND password=:password";
 
 		$stmt = $db->prepare($query);
 		$stmt->bindParam('username', $username);
@@ -42,7 +42,9 @@ if (isset($_POST['username'])) {
 				"username" => $username,
 				"email" => $email,
 				"phone" => $phone,
-				"address" => $address
+				"address" => $address,
+				"rescuer" => $rescuer == "1",
+				"admin" => $admin == "1"
 			);
 
 			$arr['success'] = 1;
@@ -51,8 +53,10 @@ if (isset($_POST['username'])) {
 			session_start();
 			$arr['session'] = session_id();
 			$_SESSION['id'] = $temp['id'];
-
-			echo json_encode($arr);
+			$_SESSION['rescuer'] = $rescuer == "1";
+			$_SESSION['admin'] = $admin == "1";
+ 			$_SESSION['user'] = $duser == "1";
+ 			echo json_encode($arr);
 		} else {
 			echo json_encode(
 				array('success' => 0, 'message' => 'Bad username or password')

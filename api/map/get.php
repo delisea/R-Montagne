@@ -30,10 +30,9 @@ if (isset($_POST['session']) && isset($_POST['map'])) {
 		$num = $stmt->rowCount();
 
 		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
 			extract($row);
 
-			$entry = array(
+$entry = array(
 				'name' => $name,
 				'topLeftLatitude' => $topLeftLatitude,
 				'topLeftLongitude' => $topLeftLongitude,
@@ -41,8 +40,22 @@ if (isset($_POST['session']) && isset($_POST['map'])) {
 				'bottomRightLongitude' => $bottomRightLongitude,
 				'centerLatitude' => $centerLatitude,
 				'centerLongitude' => $centerLongitude,
-				'zoom' => $zoom
+				'zoom' => $zoom,
+                                'polygon' => array()
 			);
+
+
+$query = 'SELECT longitude, latitude FROM MapPolygon WHERE idMap=:id';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $map);
+		$stmt->execute();
+while($point = $stmt->fetch(PDO::FETCH_ASSOC)) {
+array_push($entry['polygon'], $point);
+}
+
+
+			
 
 			$arr['success'] = 1;
 			$arr['map'] = $entry;

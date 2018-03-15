@@ -13,31 +13,26 @@ if (isset($_POST['session'])) {
 	session_start();
 
 	if (isset($_SESSION['id'])) {
-
 		$arr = array();
 		$arr['trackers'] = array();
 
-		$query = 'SELECT idTracker, idUser FROM Tracker';
+		$query = 'SELECT t.idTracker, l.idLicense, MAX(l.end) AS end  FROM Tracker AS t LEFT JOIN TrackerLicenseTemp AS l ON t.idTracker=l.idTracker WHERE t.idUser='.$_SESSION['id'].' GROUP BY t.idTracker';
 
 		$stmt = $db->prepare($query);
 		$stmt->execute();
-		$num = $stmt->rowCount();
-
-		if (num > 0) {
+                $date = new DateTime();
 
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-				extract($row);
-
 				$entry = array(
-					'idTracker', $idTracker,
-					'idUser', $idUser
+					'idTracker' => $row['idTracker'],
+					'idLicense' => $row['idLicense'],
+					'end' => ($row['end'] === NULL)?NULL:round(($row['end']-$date->getTimestamp())/(3600*24),1),
+					'ended' => ($row['end'] === NULL || $row['end']<$date->getTimestamp())
 				);
 
 				array_push($arr['trackers'], $entry);
 			}
-		}
-
 		$arr['success'] = 1;
 		echo json_encode($arr);
 	} else {

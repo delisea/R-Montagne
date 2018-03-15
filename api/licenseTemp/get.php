@@ -12,40 +12,29 @@ $db = $database->getConnection();
 
 if (isset($_POST['session'])) {
 
-	session_id($_POST['sessoin']);
+	session_id($_POST['session']);
 	session_start();
 
 	if (isset($_SESSION['id'])) {
 
 		$arr = array();
-		$arr['historics'] = array();
 
-		$query = 'SELECT idTracker, date, latitude, longitude, alert, map FROM Historic';
+		$query = 'SELECT idLicense, end FROM `TrackerLicenseTemp` WHERE idUser=:id ORDER BY end DESC';
 
 		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $_SESSION['id']);
 		$stmt->execute();
+
 		$num = $stmt->rowCount();
 
-		if (num > 0) {
-
-			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
-				extract($row);
-
-				$entry = array(
-					'idTracker' => $idTracker,
-					'date' => $date,
-					'latitude' => $latitude,
-					'longitude' => $longitude,
-					'alert' => $alert,
-					'map' => $map
-				);
-
-				array_push($arr['historics'], $entry);
-			}
-		}
-
-		$arr['success'] = 1;
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			extract($row);
+			$entry = array(
+	             		'idLicense' => $idLicense,
+				'endDate' => $end
+			);
+			array_push($arr, $entry);
+	        }
 		echo json_encode($arr);
 	} else {
 		echo json_encode(

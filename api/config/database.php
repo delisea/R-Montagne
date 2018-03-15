@@ -1,10 +1,10 @@
 <?php
 class Database{
 
-    private $host = "";
-    private $db_name = "";
-    private $username = "";
-    private $password = "";
+    private $host = "sql4.cluster1.easy-hebergement.net";
+    private $db_name = "closed5";
+    private $username = "closed5";
+    private $password = "pouted2";
     public $conn;
 
     public function getConnection(){

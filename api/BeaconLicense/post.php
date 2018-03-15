@@ -5,17 +5,13 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-if (isset($_POST['session'])) {
+include_once '../config/database.php';
 
-	session_id($_POST['session']);
-	session_start();
-	session_destroy();
+$database = new Database();
+$db = $database->getConnection();
 
-	echo json_encode(
-		array('success' => 1, 'message' => 'User successfully logged out')
-	);
-} else {
-	echo json_encode(
-		array('success' => 0, 'message' => 'Invalid parameters')
-	);
+$query = 'INSERT INTO `INSERT INTO `BeaconLicense`(`idBeacon`) VALUES ('.$_POST['idBeacon'].'')';
+
+$stmt = $db->prepare($query);
+$stmt->execute();
 }

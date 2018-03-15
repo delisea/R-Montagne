@@ -10,23 +10,24 @@ include_once '../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-if (isset($_POST['session']) && isset($_POST['latitude']) && isset($_POST['longitude']) && isset($_POST['map'])) {
-
-	session_id($_POST['session']);
-	session_start();
-
-	if (isset($_SESSION['id'])) {
-
+if (isset($_POST['latitude']) && isset($_POST['longitude'])) {
 		$latitude = htmlspecialchars(strip_tags($_POST['latitude']));
 		$longitude = htmlspecialchars(strip_tags($_POST['longitude']));
-		$map = htmlspecialchars(strip_tags($_POST['map']));
 
-		$query = 'INSERT INTO Beacon SET latitude=:latitude, longitude=:longitude, map=:map';
+		$query = 'INSERT INTO Beacon SET latitude=:latitude, longitude=:longitude';
 
 		$stmt = $db->prepare($query);
 		$stmt->bindParam('latitude', $latitude);
 		$stmt->bindParam('longitude', $longitude);
-		$stmt->bindParam('map', $map);
+ 
+                $stmt->execute();
+
+                $lid = $db->lastInsertId();
+		$query = 'INSERT INTO BeaconLicense SET id=:id, idBeacon=:idb';
+
+		$stmt = $db->prepare($query);
+		$stmt->bindParam('id', $lid);
+		$stmt->bindParam('idb', $lid);
 
 		if ($stmt->execute()) {
 			echo json_encode(
@@ -37,13 +38,4 @@ if (isset($_POST['session']) && isset($_POST['latitude']) && isset($_POST['longi
 				array('success' => 0, 'message' => 'An error has occured')
 			);
 		}
-	} else {
-		echo json_encode(
-			array('success' => 0, 'message' => 'Invalid session')
-		);
-	}
-} else {
-	echo json_encode(
-		array('success' => 0, 'message' => 'Invalid parameters')
-	);
 }
