@@ -77,7 +77,7 @@
         <ion-list inset>
           <ng-container *ngFor="let tr of trackers">
             <ion-item class="ro" *ngIf="!tr.ended">
-              <ion-label color="black">Tracker {{tr.idTracker}}</ion-label>
+              <ion-label style="margin : 0;" color="black">Tracker {{tr.idTracker}}</ion-label>
               <ion-input type="text" class="custom-placeholder" placeholder="License {{tr.idLicense}} ends in {{tr.end}} days" readonly></ion-input>
             </ion-item>
           </ng-container>

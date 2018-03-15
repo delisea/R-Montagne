@@ -57,8 +57,8 @@
             <ion-input type="text" placeholder="Address" name="address" [(ngModel)]="credentials.address" required [readonly]="isReadonly()"></ion-input>
           </ion-item>
           <ion-item class="ro" *ngIf="licenseactive && !credentials.rescuer">
-            <ion-label fixed>License</ion-label>r
-            <ion-input type="text" class="custom-placeholder" placeholder="{{licenseCurrent}} is active until {{licenseEndDate * 1000 | date}}" name="licensed" required readonly></ion-input>
+            <ion-label fixed>License {{licenseCurrent}}</ion-label>r
+            <ion-input type="text" class="custom-placeholder" placeholder="Until {{licenseEndDate * 1000 | date}}" name="licensed" required readonly></ion-input>
           </ion-item>
           <ion-item class="ro" *ngIf="!licenseactive && !licenseIsEmpty && licenseCurrent!==null && !credentials.rescuer">
             <ion-label fixed>License</ion-label>
@@ -66,7 +66,7 @@
           </ion-item>
           <ion-item class="ro" *ngIf="licenseIsEmpty && !credentials.rescuer">
             <ion-label fixed>License</ion-label>
-            <ion-input type="text" class="custom-placeholder" placeholder="No license detected" name="licensed" required readonly></ion-input>
+            <ion-input type="text" class="custom-placeholder" placeholder="No license active" name="licensed" required readonly></ion-input>
           </ion-item>
           <ion-item class="ro" *ngIf="credentials.rescuer && !credentials.admin">
             <ion-label fixed>Status</ion-label>
